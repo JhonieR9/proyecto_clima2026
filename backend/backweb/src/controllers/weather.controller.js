@@ -24,7 +24,7 @@ const WeatherController = {
 
       // 2. Si no está en caché, usamos la API gratuita de Open-Meteo
       // Primero: Convertimos el nombre de la ciudad a coordenadas usando la API de Geocoding de Open-Meteo
-      const geoUrl = `https://open-meteo.com{encodeURIComponent(city)}&count=1&language=es&format=json`;
+      const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=es&format=json`;
       const geoResponse = await axios.get(geoUrl);
 
       if (!geoResponse.data.results || geoResponse.data.results.length === 0) {
@@ -34,7 +34,7 @@ const WeatherController = {
       const { latitude, longitude, name: formattedCity } = geoResponse.data.results[0];
 
       // Segundo: Con las coordenadas obtenidas, consultamos el clima actual
-      const weatherUrl = `https://open-meteo.com{latitude}&longitude=${longitude}&current_weather=true`;
+      const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
       const weatherResponse = await axios.get(weatherUrl);
 
       const current = weatherResponse.data.current_weather;

@@ -1,6 +1,6 @@
 // frontend/src/stores/weather.store.ts
 import { defineStore } from 'pinia';
-import { WeatherService, type WeatherData } from '../services/weather.service.ts';
+import { WeatherService, type WeatherData } from '../services/weather.service';
 
 
 
@@ -31,22 +31,16 @@ export const useWeatherStore = defineStore('weather', {
       try {
         const response = await WeatherService.fetchWeather(city);
         this.sourceInfo = response.source;
+        this.currentWeather = response.data ?? null;
 
-        // Validamos si la respuesta vino dentro de un arreglo (común desde PostgreSQL) o directa
-        if (Array.isArray(response.data)) {
-          this.currentWeather = response.data[0] || null;
-        } else {
-          this.currentWeather = response.data;
-        }
-        
         if (!this.currentWeather) {
           this.error = `No se encontraron datos disponibles para: ${city}`;
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         this.currentWeather = null;
         this.sourceInfo = null;
-        // Captura mensajes detallados de error que vengan del servidor
-        this.error = err.response?.data?.error || 'No se pudo conectar con el servidor meteorológico.';
+        const axiosError = err as { response?: { data?: { error?: string } } };
+        this.error = axiosError.response?.data?.error ?? 'No se pudo conectar con el servidor meteorológico.';
       } finally {
         this.loading = false;
       }

@@ -2,12 +2,12 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
-import './style.css'; // Mantiene tus estilos base
+import router from './router';
+import './style.css';
 
 const app = createApp(App);
-const pinia = createPinia();
 
-// Acoplamos Pinia a la aplicación de Vue
-app.use(pinia);
+app.use(createPinia());
+app.use(router);
 
 app.mount('#app');
