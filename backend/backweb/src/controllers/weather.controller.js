@@ -14,11 +14,10 @@ const WeatherController = {
       // 1. Intentar obtener los datos desde nuestra caché local en PostgreSQL
       const cachedData = await WeatherCache.findByCity(city);
 
-      if (cachedData && cachedData.length > 0) {
-        // Si existe y tiene menos de 2 horas, devolvemos la caché con un header indicador
+      if (cachedData) {
         return res.status(200).json({
           source: 'cache',
-          data: cachedData[0]
+          data: cachedData
         });
       }
 

@@ -20,6 +20,28 @@ const schema = [
       { name: 'created_at', def: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' },
     ],
   },
+  {
+    table: 'weather_cache',
+    create: `
+      CREATE TABLE IF NOT EXISTS weather_cache (
+        id SERIAL PRIMARY KEY,
+        city VARCHAR(150) UNIQUE NOT NULL,
+        latitude NUMERIC(9,6) NOT NULL,
+        longitude NUMERIC(9,6) NOT NULL,
+        temperature NUMERIC(5,2) NOT NULL,
+        condition_text VARCHAR(100) NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `,
+    columns: [
+      { name: 'city',           def: 'VARCHAR(150) UNIQUE NOT NULL' },
+      { name: 'latitude',       def: 'NUMERIC(9,6) NOT NULL' },
+      { name: 'longitude',      def: 'NUMERIC(9,6) NOT NULL' },
+      { name: 'temperature',    def: 'NUMERIC(5,2) NOT NULL' },
+      { name: 'condition_text', def: 'VARCHAR(100) NOT NULL' },
+      { name: 'updated_at',     def: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' },
+    ],
+  },
 ];
 
 async function runMigrations() {
