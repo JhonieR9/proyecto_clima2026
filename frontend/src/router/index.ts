@@ -1,6 +1,7 @@
 // frontend/src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
+import { useWeatherStore } from '../stores/weather.store';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -12,6 +13,15 @@ const routes: RouteRecordRaw[] = [
     path: '/result',
     name: 'weather-result',
     component: () => import('../views/ResultadoClimaView.vue'),
+    // Navigation Guard: solo permite entrar si hay datos en el store
+    beforeEnter: (_to, _from, next) => {
+      const store = useWeatherStore();
+      if (!store.currentWeather) {
+        next({ name: 'home' });
+      } else {
+        next();
+      }
+    },
   },
   {
     // Captura cualquier ruta no definida → 404

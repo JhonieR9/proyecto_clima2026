@@ -1,19 +1,11 @@
 <!-- frontend/src/views/WeatherResultView.vue -->
 <!-- Vista de resultado: muestra el clima obtenido y el origen de los datos (cache vs API) -->
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useWeatherStore } from '../stores/weather.store';
 
 const router = useRouter();
 const weatherStore = useWeatherStore();
-
-// Si el usuario llega aquí sin datos (recarga directa), redirigir al home
-onMounted(() => {
-  if (!weatherStore.currentWeather) {
-    router.replace({ name: 'home' });
-  }
-});
 
 // Volver al home y limpiar el estado
 const goBack = () => {
