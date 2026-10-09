@@ -6,18 +6,18 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
-    component: () => import('../views/HomeView.vue'),
+    component: () => import('../views/BuscadorView.vue'),
   },
   {
     path: '/result',
     name: 'weather-result',
-    component: () => import('../views/WeatherResultView.vue'),
+    component: () => import('../views/ResultadoClimaView.vue'),
   },
   {
     // Captura cualquier ruta no definida → 404
     path: '/:pathMatch(.*)*',
     name: 'not-found',
-    component: () => import('../views/NotFoundView.vue'),
+    component: () => import('../views/PaginaNoEncontradaView.vue'),
   },
 ];
 
