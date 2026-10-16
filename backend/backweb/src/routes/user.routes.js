@@ -1,7 +1,15 @@
 const { Router } = require('express');
 const UserController = require('../controllers/user.controller');
+const {
+  authenticate,
+  authorize,
+  authorizeSelfOrAdmin,
+} = require('../middlewares/auth.middleware');
 
 const router = Router();
+
+// Todas las rutas de usuarios requieren estar autenticado.
+router.use(authenticate);
 
 /**
  * @swagger
@@ -73,7 +81,8 @@ const router = Router();
  *                   items:
  *                     $ref: '#/components/schemas/User'
  */
-router.get('/', UserController.getAll);
+// Listar todos: solo admin.
+router.get('/', authorize('admin'), UserController.getAll);
 
 /**
  * @swagger
@@ -102,7 +111,8 @@ router.get('/', UserController.getAll);
  *       404:
  *         description: Usuario no encontrado
  */
-router.get('/:id', UserController.getById);
+// Ver un usuario: el propio dueño o un admin (resource ownership).
+router.get('/:id', authorizeSelfOrAdmin('id'), UserController.getById);
 
 /**
  * @swagger
@@ -133,7 +143,8 @@ router.get('/:id', UserController.getById);
  *       409:
  *         description: Email ya registrado
  */
-router.post('/', UserController.create);
+// Crear usuario desde el panel admin (el registro público va por /api/auth/register).
+router.post('/', authorize('admin'), UserController.create);
 
 /**
  * @swagger
@@ -159,7 +170,8 @@ router.post('/', UserController.create);
  *       404:
  *         description: Usuario no encontrado
  */
-router.put('/:id', UserController.update);
+// Actualizar: el propio dueño o un admin.
+router.put('/:id', authorizeSelfOrAdmin('id'), UserController.update);
 
 /**
  * @swagger
@@ -179,6 +191,7 @@ router.put('/:id', UserController.update);
  *       404:
  *         description: Usuario no encontrado
  */
-router.delete('/:id', UserController.remove);
+// Eliminar: solo admin.
+router.delete('/:id', authorize('admin'), UserController.remove);
 
 module.exports = router;

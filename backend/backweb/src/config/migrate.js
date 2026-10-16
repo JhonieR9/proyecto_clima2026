@@ -10,6 +10,7 @@ const schema = [
         name VARCHAR(100) NOT NULL,
         email VARCHAR(150) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
+        role VARCHAR(20) NOT NULL DEFAULT 'user',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `,
@@ -17,6 +18,30 @@ const schema = [
       { name: 'name',       def: 'VARCHAR(100) NOT NULL' },
       { name: 'email',      def: 'VARCHAR(150)' },
       { name: 'password',   def: 'VARCHAR(255) NOT NULL' },
+      // RBAC: rol del usuario ('user' | 'admin')
+      { name: 'role',       def: "VARCHAR(20) NOT NULL DEFAULT 'user'" },
+      { name: 'created_at', def: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' },
+    ],
+  },
+  {
+    // Refresh tokens persistidos para rotación y revocación de sesiones.
+    // CORE: "Refresh Token rotativo ... con revocación de sesiones concurrentes".
+    table: 'refresh_tokens',
+    create: `
+      CREATE TABLE IF NOT EXISTS refresh_tokens (
+        id SERIAL PRIMARY KEY,
+        jti UUID UNIQUE NOT NULL,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        revoked BOOLEAN NOT NULL DEFAULT FALSE,
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `,
+    columns: [
+      { name: 'jti',        def: 'UUID' },
+      { name: 'user_id',    def: 'INTEGER' },
+      { name: 'revoked',    def: 'BOOLEAN NOT NULL DEFAULT FALSE' },
+      { name: 'expires_at', def: 'TIMESTAMP' },
       { name: 'created_at', def: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' },
     ],
   },
