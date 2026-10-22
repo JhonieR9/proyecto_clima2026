@@ -3,7 +3,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { useWeatherStore } from '../stores/weather.store';
-import CajaBusqueda fro../components/CajaBusqueda.vueda.vue';
+import CajaBusqueda from '../components/CajaBusqueda.vue';
 
 const router = useRouter();
 const weatherStore = useWeatherStore();
