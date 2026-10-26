@@ -4,7 +4,7 @@
 import { useRouter } from 'vue-router';
 import { useWeatherStore } from '../stores/weather.store';
 import FilaCoordenadas from '../components/FilaCoordenadas.vue';
-import InsigniaOrigen from '../components/InsigniaOrigen.vue';e';
+import InsigniaOrigen from '../components/InsigniaOrigen.vue';
 
 const router = useRouter();
 const weatherStore = useWeatherStore();
