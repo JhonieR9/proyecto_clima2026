@@ -20,8 +20,36 @@ export const http: AxiosInstance = axios.create({
 });
 
 // Marca interna para no reintentar infinitamente una misma petición.
+//  - _retry: marca el (único) reintento tras refrescar el token por un 401.
+//  - _retryCount: nº de reintentos automáticos ya hechos ante red/5xx/429.
 interface RetriableConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
+  _retryCount?: number;
+}
+
+// --- Configuración de reintentos automáticos ---
+// CORE: "Axios ... con reintentos automáticos". Reintentamos ante fallos
+// transitorios (sin respuesta del servidor, 5xx, o 429) usando backoff
+// exponencial. Solo métodos idempotentes para no repetir efectos secundarios.
+const MAX_RETRIES = 3;
+const RETRY_BASE_DELAY_MS = 300; // 300ms, 600ms, 1200ms...
+const IDEMPOTENT_METHODS = ['get', 'head', 'options'];
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// ¿Este error es transitorio y vale la pena reintentarlo?
+function isRetriableError(error: AxiosError, config: RetriableConfig): boolean {
+  const method = (config.method ?? 'get').toLowerCase();
+  if (!IDEMPOTENT_METHODS.includes(method)) return false;
+
+  // Sin respuesta => error de red o timeout: reintentar.
+  if (!error.response) return true;
+
+  // 5xx (servidor) o 429 (rate limit): reintentar.
+  const status = error.response.status;
+  return status >= 500 || status === 429;
 }
 
 // --- Rotura de dependencia circular ---
@@ -69,6 +97,24 @@ http.interceptors.response.use(
     const original = error.config as RetriableConfig | undefined;
     const status = error.response?.status;
     const url = original?.url ?? '';
+
+    // --- Reintentos automáticos ante fallos transitorios (red / 5xx / 429) ---
+    // Se aplica antes del manejo de 401. Usa backoff exponencial y respeta
+    // el header Retry-After si el servidor lo envía (típico en 429).
+    if (original && isRetriableError(error, original)) {
+      const attempt = (original._retryCount ?? 0) + 1;
+      if (attempt <= MAX_RETRIES) {
+        original._retryCount = attempt;
+
+        const retryAfter = Number(error.response?.headers?.['retry-after']);
+        const wait = Number.isFinite(retryAfter) && retryAfter > 0
+          ? retryAfter * 1000
+          : RETRY_BASE_DELAY_MS * 2 ** (attempt - 1);
+
+        await delay(wait);
+        return http(original);
+      }
+    }
 
     // No intentamos refrescar para las propias rutas de sesión (evita bucles).
     const isAuthRoute =
