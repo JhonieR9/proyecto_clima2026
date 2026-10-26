@@ -65,8 +65,14 @@ const AuthController = {
   },
 
   // GET /api/auth/me  (requiere authenticate)
-  async me(req, res) {
-    res.json({ success: true, data: req.user });
+  // Devuelve el perfil completo (id, name, email, role), no solo lo que trae el token.
+  async me(req, res, next) {
+    try {
+      const user = await AuthService.getProfile(req.user.id);
+      res.json({ success: true, data: user });
+    } catch (err) {
+      next(err);
+    }
   },
 };
 

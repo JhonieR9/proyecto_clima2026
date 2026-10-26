@@ -1,6 +1,9 @@
 const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 
+// Factor de coste de bcrypt. 12 es el minimo recomendado hoy; configurable por env.
+const BCRYPT_ROUNDS = Number(process.env.BCRYPT_ROUNDS) || 12;
+
 const UserModel = {
   async findAll() {
     const { rows } = await pool.query(
@@ -25,9 +28,10 @@ const UserModel = {
     return rows[0] || null;
   },
 
-  async create({ name, email, password, role = 'user' }) {
-    const hashed = await bcrypt.hash(password, 10);
-    const { rows } = await pool.query(
+  // `executor` permite pasar un cliente de transaccion; por defecto usa el pool.
+  async create({ name, email, password, role = 'user' }, executor = pool) {
+    const hashed = await bcrypt.hash(password, BCRYPT_ROUNDS);
+    const { rows } = await executor.query(
       'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role, created_at',
       [name, email, hashed, role]
     );
