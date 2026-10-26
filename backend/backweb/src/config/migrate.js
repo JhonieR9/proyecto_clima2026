@@ -50,7 +50,8 @@ const schema = [
     create: `
       CREATE TABLE IF NOT EXISTS weather_cache (
         id SERIAL PRIMARY KEY,
-        city VARCHAR(150) UNIQUE NOT NULL,
+        city_key VARCHAR(150),
+        city VARCHAR(150) NOT NULL,
         latitude NUMERIC(9,6) NOT NULL,
         longitude NUMERIC(9,6) NOT NULL,
         temperature NUMERIC(5,2) NOT NULL,
@@ -59,12 +60,19 @@ const schema = [
       )
     `,
     columns: [
-      { name: 'city',           def: 'VARCHAR(150) UNIQUE NOT NULL' },
+      // Clave normalizada (minúsculas, sin acentos) para que la caché acierte
+      // aunque el usuario escriba la ciudad con o sin tildes.
+      { name: 'city_key',       def: 'VARCHAR(150)' },
+      { name: 'city',           def: 'VARCHAR(150) NOT NULL' },
       { name: 'latitude',       def: 'NUMERIC(9,6) NOT NULL' },
       { name: 'longitude',      def: 'NUMERIC(9,6) NOT NULL' },
       { name: 'temperature',    def: 'NUMERIC(5,2) NOT NULL' },
       { name: 'condition_text', def: 'VARCHAR(100) NOT NULL' },
       { name: 'updated_at',     def: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' },
+    ],
+    // Índices/constraints extra que se aplican tras asegurar las columnas.
+    postStatements: [
+      'CREATE UNIQUE INDEX IF NOT EXISTS weather_cache_city_key_uidx ON weather_cache (city_key)',
     ],
   },
 ];
@@ -84,6 +92,11 @@ async function runMigrations() {
         await pool.query(`ALTER TABLE ${entry.table} ADD COLUMN IF NOT EXISTS ${col.name} ${col.def}`);
         console.log(`Columna añadida: ${entry.table}.${col.name}`);
       }
+    }
+
+    // Sentencias extra (índices, constraints) tras asegurar las columnas.
+    for (const stmt of entry.postStatements || []) {
+      await pool.query(stmt);
     }
 
     console.log(`Tabla lista: ${entry.table}`);

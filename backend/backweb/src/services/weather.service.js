@@ -23,8 +23,19 @@ const revalidationQueue = new TaskQueue({
 const FRESH_MS = 30 * 60 * 1000;        // < 30 min: dato fresco, se sirve directo
 const STALE_MS = 24 * 60 * 60 * 1000;   // 30 min a 24 h: se sirve y se revalida
 
+// Normaliza el nombre de ciudad a una clave de caché estable: minúsculas, sin
+// acentos y sin espacios sobrantes. Así "Bogota", "bogotá" y "  BOGOTÁ " caen
+// todas en la misma entrada de caché (L1 y L2).
+function cityKeyOf(city) {
+  return city
+    .normalize('NFD')               // separa letra y acento
+    .replace(/[\u0300-\u036f]/g, '') // elimina los diacríticos
+    .trim()
+    .toLowerCase();
+}
+
 // --- L1: caché en memoria del proceso Node ---
-const memoryCache = new Map(); // key: ciudad en minúscula -> { data, cachedAt }
+const memoryCache = new Map(); // key: cityKey -> { data, cachedAt }
 const L1_TTL_MS = FRESH_MS;
 
 function l1Get(key) {
@@ -83,12 +94,14 @@ async function fetchFromApi(city, correlationId) {
   return data;
 }
 
-// Persiste en L2 (Postgres) y refresca L1.
+// Persiste en L2 (Postgres) y refresca L1. Usa la clave normalizada de la
+// ciudad consultada para que la caché acierte sin importar acentos.
 async function persist(city, data) {
+  const key = cityKeyOf(city);
   await WeatherCache.upsertWeather(
-    data.city, data.latitude, data.longitude, data.temperature, data.condition_text
+    key, data.city, data.latitude, data.longitude, data.temperature, data.condition_text
   );
-  l1Set(city.toLowerCase(), data);
+  l1Set(key, data);
 }
 
 const WeatherService = {
@@ -97,7 +110,7 @@ const WeatherService = {
    * @returns {Promise<{ source: string, data: object }>}
    */
   async getWeather(city, correlationId) {
-    const key = city.toLowerCase();
+    const key = cityKeyOf(city);
 
     // --- L1: memoria ---
     const fromMemory = l1Get(key);
@@ -106,7 +119,7 @@ const WeatherService = {
     }
 
     // --- L2: PostgreSQL ---
-    const cached = await WeatherCache.findByCity(city); // trae la fila aunque esté vieja
+    const cached = await WeatherCache.findByKey(key); // trae la fila aunque esté vieja
     if (cached) {
       const ageMs = Date.now() - new Date(cached.updated_at).getTime();
 
@@ -165,7 +178,7 @@ const WeatherService = {
   // Encola la revalidación en la cola de tareas: así se limita la concurrencia,
   // se de-duplican peticiones de la misma ciudad y se reintenta ante fallos.
   revalidateInBackground(city, correlationId) {
-    const key = city.toLowerCase();
+    const key = cityKeyOf(city);
     revalidationQueue.enqueue(
       key,
       async () => {
