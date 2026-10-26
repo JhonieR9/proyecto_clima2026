@@ -1,16 +1,24 @@
 // frontend/src/stores/weather.store.ts
 import { defineStore } from 'pinia';
-import { WeatherService, type WeatherData } from '../services/weather.service';
-
-
-
+import { AxiosError } from 'axios';
+import {
+  WeatherService,
+  type WeatherData,
+  type WeatherSource,
+} from '../services/weather.service';
 
 // 1. Definimos la estructura estricta del estado de nuestra tienda
 interface WeatherState {
   currentWeather: WeatherData | null;
   loading: boolean;
   error: string | null;
-  sourceInfo: 'cache' | 'api_fresh' | null;
+  sourceInfo: WeatherSource | null;
+}
+
+// Forma del cuerpo de error que devuelve el backend.
+interface ApiErrorBody {
+  error?: { code?: string; message?: string } | string;
+  message?: string;
 }
 
 export const useWeatherStore = defineStore('weather', {
@@ -39,8 +47,7 @@ export const useWeatherStore = defineStore('weather', {
       } catch (err: unknown) {
         this.currentWeather = null;
         this.sourceInfo = null;
-        const axiosError = err as { response?: { data?: { error?: string } } };
-        this.error = axiosError.response?.data?.error ?? 'No se pudo conectar con el servidor meteorológico.';
+        this.error = this.extractError(err, 'No se pudo conectar con el servidor meteorológico.');
       } finally {
         this.loading = false;
       }
@@ -51,6 +58,20 @@ export const useWeatherStore = defineStore('weather', {
       this.currentWeather = null;
       this.error = null;
       this.sourceInfo = null;
+    },
+
+    // Normaliza el error del backend ({ error: { message } } o { error: string })
+    // a un mensaje legible, sin recurrir al tipo 'any'.
+    extractError(err: unknown, fallback: string): string {
+      if (err instanceof AxiosError) {
+        const body = err.response?.data as ApiErrorBody | undefined;
+        if (body) {
+          if (typeof body.error === 'string') return body.error;
+          if (body.error?.message) return body.error.message;
+          if (body.message) return body.message;
+        }
+      }
+      return fallback;
     }
   }
 });

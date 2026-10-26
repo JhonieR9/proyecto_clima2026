@@ -3,6 +3,7 @@
 // (Controladores, Servicios, Repositorios)". Aquí vive la lógica de negocio;
 // el controlador solo traduce HTTP <-> servicio.
 const { randomUUID } = require('crypto');
+const pool = require('../config/db');
 const UserModel = require('../models/user.model');
 const RefreshTokenModel = require('../models/refreshToken.model');
 const AppError = require('../utils/AppError');
@@ -38,6 +39,15 @@ const AuthService = {
     return sanitizeUser(user);
   },
 
+  // Devuelve el perfil del usuario autenticado (para GET /api/auth/me).
+  async getProfile(userId) {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw AppError.unauthorized('Usuario no encontrado');
+    }
+    return sanitizeUser(user);
+  },
+
   // Login: valida credenciales y emite el par de tokens.
   async login({ email, password }) {
     const user = await UserModel.findByEmail(email);
@@ -53,16 +63,20 @@ const AuthService = {
   },
 
   // Genera access + refresh y persiste el refresh (por su jti).
-  async issueTokens(user) {
+  // `executor` permite participar en una transaccion existente (ej. la rotacion).
+  async issueTokens(user, executor = pool) {
     const jti = randomUUID();
     const accessToken = signAccessToken({ id: user.id, role: user.role });
     const refreshToken = signRefreshToken({ id: user.id, role: user.role, jti });
 
-    await RefreshTokenModel.save({
-      jti,
-      userId: user.id,
-      expiresAt: refreshExpiryDate(),
-    });
+    await RefreshTokenModel.save(
+      {
+        jti,
+        userId: user.id,
+        expiresAt: refreshExpiryDate(),
+      },
+      executor
+    );
 
     return { accessToken, refreshToken, user: sanitizeUser(user) };
   },
@@ -92,14 +106,18 @@ const AuthService = {
       throw AppError.unauthorized('Sesión revocada. Vuelve a iniciar sesión.');
     }
 
-    // Rotación: invalidamos el token usado y emitimos uno nuevo.
-    await RefreshTokenModel.revoke(payload.jti);
-
     const user = await UserModel.findById(payload.id);
     if (!user) {
       throw AppError.unauthorized('Usuario no encontrado');
     }
-    return this.issueTokens(user);
+
+    // Rotación atómica (ACID): revocar el token usado y emitir el nuevo ocurren
+    // dentro de una misma transacción. Si algo falla, se revierte todo.
+    return pool.withTransaction((client) =>
+      RefreshTokenModel.revoke(payload.jti, client).then(() =>
+        this.issueTokens(user, client)
+      )
+    );
   },
 
   // Logout: revoca el refresh token actual.
