@@ -8,6 +8,16 @@ const axios = require('axios');
 const WeatherCache = require('../models/weatherCache.model');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
+const TaskQueue = require('../utils/taskQueue');
+
+// Cola en memoria para las revalidaciones en segundo plano (patrón SWR).
+// Concurrencia 2: no saturamos a Open-Meteo aunque lleguen muchas peticiones stale.
+const revalidationQueue = new TaskQueue({
+  name: 'weather-revalidation',
+  concurrency: 2,
+  maxRetries: 2,
+  baseDelayMs: 1000,
+});
 
 // --- Umbrales de frescura (Stale-While-Revalidate) ---
 const FRESH_MS = 30 * 60 * 1000;        // < 30 min: dato fresco, se sirve directo
@@ -152,11 +162,24 @@ const WeatherService = {
   },
 
   // Refresco en segundo plano para el patrón Stale-While-Revalidate.
+  // Encola la revalidación en la cola de tareas: así se limita la concurrencia,
+  // se de-duplican peticiones de la misma ciudad y se reintenta ante fallos.
   revalidateInBackground(city, correlationId) {
-    fetchFromApi(city, correlationId)
-      .then((fresh) => persist(city, fresh))
-      .then(() => logger.info('weather.revalidated', { correlationId, city }))
-      .catch((err) => logger.warn('weather.revalidate_failed', { correlationId, city, reason: err.message }));
+    const key = city.toLowerCase();
+    revalidationQueue.enqueue(
+      key,
+      async () => {
+        const fresh = await fetchFromApi(city, correlationId);
+        await persist(city, fresh);
+        logger.info('weather.revalidated', { correlationId, city });
+      },
+      { correlationId }
+    );
+  },
+
+  // Expuesto para health checks / pruebas: estado de la cola de revalidación.
+  getRevalidationQueueStats() {
+    return revalidationQueue.stats();
   },
 };
 
