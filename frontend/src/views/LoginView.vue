@@ -75,12 +75,16 @@ const handleSubmit = async () => {
 
 <style scoped>
 .auth-card {
-  background: #ffffff;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
   padding: 36px 32px;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  color: #fff;
 }
 
 .auth-header {
@@ -89,15 +93,15 @@ const handleSubmit = async () => {
 }
 
 .auth-title {
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 700;
-  color: #1e3c72;
+  color: #fff;
   margin: 0 0 6px;
 }
 
 .auth-subtitle {
   font-size: 12px;
-  color: #888;
+  color: rgba(255, 255, 255, 0.75);
   margin: 0;
 }
 
@@ -117,36 +121,40 @@ const handleSubmit = async () => {
 .field-label {
   font-size: 12px;
   font-weight: 600;
-  color: #555;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .field-input {
-  border: 1px solid #d0d7e2;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 8px;
   padding: 11px 13px;
   font-size: 14px;
+  color: #1a202c;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .field-input:focus {
-  border-color: #2a5298;
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
 }
 
 .btn-primary {
-  background: #2a5298;
-  color: #fff;
+  background: #ffffff;
+  color: #1e3c72;
   border: none;
   border-radius: 8px;
   padding: 12px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: transform 0.15s, box-shadow 0.2s;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #1e3c72;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
 .btn-primary:disabled {
@@ -155,9 +163,9 @@ const handleSubmit = async () => {
 }
 
 .error-badge {
-  background: #fff0f0;
-  color: #c62828;
-  border: 1px solid #ffcdd2;
+  background: rgba(198, 40, 40, 0.9);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 13px;
@@ -167,16 +175,16 @@ const handleSubmit = async () => {
   text-align: center;
   margin-top: 20px;
   font-size: 13px;
-  color: #777;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .auth-link {
-  color: #2a5298;
-  font-weight: 600;
-  text-decoration: none;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: underline;
 }
 
 .auth-link:hover {
-  text-decoration: underline;
+  opacity: 0.85;
 }
 </style>
