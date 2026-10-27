@@ -29,8 +29,8 @@ defineProps<{
 }
 
 .geo-chip {
-  background: #f7fafc;
-  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 8px;
   padding: 8px 16px;
   display: flex;
@@ -43,13 +43,13 @@ defineProps<{
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.75);
   font-weight: 600;
 }
 
 .geo-value {
   font-size: 14px;
   font-weight: 600;
-  color: #2d3748;
+  color: #ffffff;
 }
 </style>
