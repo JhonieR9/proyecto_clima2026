@@ -202,12 +202,22 @@ const WeatherService = {
    * @returns {Promise<Array<{name,country,admin1,latitude,longitude,label}>>}
    */
   async suggestCities(q, correlationId) {
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=es&format=json`;
+    // Pedimos más resultados (20) para tener de dónde priorizar Colombia,
+    // y luego recortamos a los 6 más relevantes para el desplegable.
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=20&language=es&format=json`;
     try {
       const { data } = await axios.get(url, { timeout: 5000 });
       const results = data.results || [];
-      logger.info('weather.suggest', { correlationId, q, count: results.length });
-      return results.map((r) => ({
+
+      // Orden: primero Colombia, luego el resto. Dentro de cada grupo se
+      // respeta el orden de relevancia que ya trae Open-Meteo (por población).
+      const isCO = (r) => r.country_code === 'CO' || r.country === 'Colombia';
+      const ordered = [...results].sort((a, b) => Number(isCO(b)) - Number(isCO(a)));
+
+      const top = ordered.slice(0, 6);
+      logger.info('weather.suggest', { correlationId, q, count: top.length });
+
+      return top.map((r) => ({
         name: r.name,
         country: r.country || '',
         admin1: r.admin1 || '',          // región/departamento
