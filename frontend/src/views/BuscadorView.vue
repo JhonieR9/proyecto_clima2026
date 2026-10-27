@@ -1,20 +1,42 @@
 <!-- frontend/src/views/BuscadorView.vue -->
 <!-- Vista principal: buscador de clima con indicador de origen de datos -->
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useWeatherStore } from '../stores/weather.store';
+import { useFavoriteStore } from '../stores/favorite.store';
 import CajaBusqueda from '../components/CajaBusqueda.vue';
 
 const router = useRouter();
 const weatherStore = useWeatherStore();
+const favoriteStore = useFavoriteStore();
 
-// Ejecuta la búsqueda y redirige a la vista de resultados
+// Carga las favoritas del usuario al entrar.
+onMounted(() => {
+  favoriteStore.load().catch(() => {
+    /* si falla (p. ej. sin sesión), simplemente no se muestran */
+  });
+});
+
+// Ejecuta la búsqueda y redirige a la vista de resultados.
 const handleSearch = async (city: string) => {
   await weatherStore.searchCityWeather(city);
-
-  // Solo navegar si la búsqueda fue exitosa
   if (weatherStore.currentWeather) {
     router.push({ name: 'weather-result' });
+  }
+};
+
+// Consultar el clima de una favorita (un clic, sin volver a escribir).
+const openFavorite = (city: string) => {
+  handleSearch(city);
+};
+
+// Quitar una favorita.
+const removeFavorite = async (id: number) => {
+  try {
+    await favoriteStore.remove(id);
+  } catch {
+    /* noop */
   }
 };
 </script>
@@ -42,9 +64,27 @@ const handleSearch = async (city: string) => {
       ❌ {{ weatherStore.error }}
     </div>
 
-    <!-- Sugerencia cuando no hay búsqueda aún -->
-    <p v-if="!weatherStore.currentWeather && !weatherStore.loading && !weatherStore.error" class="hint">
-      Ingresa el nombre de una ciudad para ver su clima actual.
+    <!-- ===== Favoritas del usuario ===== -->
+    <div v-if="favoriteStore.items.length > 0" class="favorites">
+      <p class="favorites-title">⭐ Tus ciudades favoritas</p>
+      <ul class="favorites-list">
+        <li v-for="fav in favoriteStore.items" :key="fav.id" class="fav-chip">
+          <button class="fav-open" @click="openFavorite(fav.city)" :title="`Ver clima de ${fav.city}`">
+            {{ fav.city }}
+          </button>
+          <button class="fav-remove" @click="removeFavorite(fav.id)" :aria-label="`Quitar ${fav.city}`">
+            ×
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Sugerencia cuando no hay búsqueda ni favoritas aún -->
+    <p
+      v-if="!weatherStore.loading && !weatherStore.error && favoriteStore.items.length === 0"
+      class="hint"
+    >
+      Busca una ciudad para ver su clima y agrégala a favoritas.
     </p>
 
   </div>
@@ -122,5 +162,66 @@ const handleSearch = async (city: string) => {
   color: rgba(255, 255, 255, 0.7);
   font-size: 13px;
   margin-top: 8px;
+}
+
+/* ===== Favoritas ===== */
+.favorites {
+  margin-top: 18px;
+  text-align: left;
+}
+
+.favorites-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 10px;
+  text-align: center;
+}
+
+.favorites-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.fav-chip {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fav-open {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 10px 7px 14px;
+  cursor: pointer;
+}
+
+.fav-open:hover {
+  text-decoration: underline;
+}
+
+.fav-remove {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 10px 0 4px;
+  cursor: pointer;
+}
+
+.fav-remove:hover {
+  color: #fff;
 }
 </style>
