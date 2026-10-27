@@ -13,4 +13,14 @@ const weatherQuerySchema = z.object({
     .regex(/^[\p{L}\s.,'-]+$/u, 'La ciudad contiene caracteres no válidos'),
 });
 
-module.exports = { weatherQuerySchema };
+// Validación del query del autocompletado. Permite texto parcial (desde 1 char).
+const suggestQuerySchema = z.object({
+  q: z
+    .string({ required_error: 'El parámetro "q" es obligatorio.' })
+    .trim()
+    .min(1, 'Escribe al menos 1 caracter')
+    .max(100, 'La búsqueda es demasiado larga')
+    .regex(/^[\p{L}\s.,'-]+$/u, 'La búsqueda contiene caracteres no válidos'),
+});
+
+module.exports = { weatherQuerySchema, suggestQuerySchema };
