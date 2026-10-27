@@ -3,7 +3,25 @@ const express = require('express');
 const router = express.Router();
 const WeatherController = require('../controllers/weather.controller');
 const validate = require('../middlewares/validate.middleware');
-const { weatherQuerySchema } = require('../validators/weather.schema');
+const { weatherQuerySchema, suggestQuerySchema } = require('../validators/weather.schema');
+
+/**
+ * @swagger
+ * /api/weather/suggest:
+ *   get:
+ *     summary: Autocompletado de ciudades (geocoding Open-Meteo)
+ *     tags: [Weather]
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema: { type: string }
+ *         example: ca
+ *     responses:
+ *       200:
+ *         description: Lista de ciudades sugeridas.
+ */
+router.get('/suggest', validate(suggestQuerySchema, 'query'), WeatherController.suggest);
 
 /**
  * @swagger

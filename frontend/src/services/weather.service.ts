@@ -30,6 +30,21 @@ export interface WeatherApiResponse {
   data: WeatherData;
 }
 
+// Sugerencia de ciudad para el autocompletado.
+export interface CitySuggestion {
+  name: string;
+  country: string;
+  admin1: string;
+  latitude: number;
+  longitude: number;
+  label: string;
+}
+
+interface SuggestResponse {
+  success: boolean;
+  data: CitySuggestion[];
+}
+
 // La URL apunta al backend que corre en el puerto 3000
 const API_URL = 'http://localhost:3000/api/weather';
 
@@ -43,5 +58,16 @@ export const WeatherService = {
       params: { city }
     });
     return response.data;
-  }
+  },
+
+  /**
+   * Autocompletado: devuelve ciudades que coinciden con el texto parcial.
+   * @param q Texto parcial (ej. "cal")
+   */
+  async suggestCities(q: string): Promise<CitySuggestion[]> {
+    const response = await axios.get<SuggestResponse>(`${API_URL}/suggest`, {
+      params: { q },
+    });
+    return response.data.data;
+  },
 };

@@ -194,6 +194,34 @@ const WeatherService = {
   getRevalidationQueueStats() {
     return revalidationQueue.stats();
   },
+
+  /**
+   * Sugerencias de ciudades para el autocompletado. Consulta el geocoding de
+   * Open-Meteo y devuelve una lista normalizada (nombre, país, región, coords).
+   * @param {string} q  Texto parcial escrito por el usuario (ej. "ca").
+   * @returns {Promise<Array<{name,country,admin1,latitude,longitude,label}>>}
+   */
+  async suggestCities(q, correlationId) {
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=es&format=json`;
+    try {
+      const { data } = await axios.get(url, { timeout: 5000 });
+      const results = data.results || [];
+      logger.info('weather.suggest', { correlationId, q, count: results.length });
+      return results.map((r) => ({
+        name: r.name,
+        country: r.country || '',
+        admin1: r.admin1 || '',          // región/departamento
+        latitude: r.latitude,
+        longitude: r.longitude,
+        // Etiqueta legible para mostrar en el desplegable.
+        label: [r.name, r.admin1, r.country].filter(Boolean).join(', '),
+      }));
+    } catch (err) {
+      // El autocompletado nunca debe romper la UI: ante fallo, lista vacía.
+      logger.warn('weather.suggest_failed', { correlationId, q, reason: err.message });
+      return [];
+    }
+  },
 };
 
 module.exports = WeatherService;

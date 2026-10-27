@@ -17,6 +17,18 @@ const WeatherController = {
       next(err); // lo maneja el error handler global
     }
   },
+
+  // GET /api/weather/suggest?q=...  (autocompletado de ciudades)
+  async suggest(req, res, next) {
+    try {
+      const { q } = req.query; // validado por Zod
+      const suggestions = await WeatherService.suggestCities(q, req.correlationId);
+      res.set('Cache-Control', 'public, max-age=300'); // 5 min
+      res.status(200).json({ success: true, data: suggestions });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
 
 module.exports = WeatherController;
