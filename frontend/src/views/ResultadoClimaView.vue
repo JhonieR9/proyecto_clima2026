@@ -2,9 +2,10 @@
 <!-- Vista de resultado: tarjeta de clima con ícono animado y fondo que cambia
      según la condición (soleado, lluvia, nublado, nieve, tormenta, niebla). -->
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useWeatherStore } from '../stores/weather.store';
+import { useFavoriteStore } from '../stores/favorite.store';
 import FilaCoordenadas from '../components/FilaCoordenadas.vue';
 import InsigniaOrigen from '../components/InsigniaOrigen.vue';
 import WeatherIcon from '../components/WeatherIcon.vue';
@@ -12,6 +13,7 @@ import { themeFromCondition } from '../utils/weatherTheme';
 
 const router = useRouter();
 const weatherStore = useWeatherStore();
+const favoriteStore = useFavoriteStore();
 
 // Tema (gradiente + tipo de ícono) derivado de la condición del clima.
 const theme = computed(() =>
@@ -22,6 +24,43 @@ const theme = computed(() =>
 const temp = computed(() =>
   Math.round(Number(weatherStore.currentWeather?.temperature ?? 0))
 );
+
+// ¿La ciudad actual ya es favorita?
+const isFav = computed(() =>
+  weatherStore.currentWeather
+    ? favoriteStore.isFavorite(weatherStore.currentWeather.city)
+    : false
+);
+
+const savingFav = ref(false);
+
+// Asegura tener la lista de favoritas para saber el estado de la estrella.
+onMounted(() => {
+  if (favoriteStore.items.length === 0) {
+    favoriteStore.load().catch(() => {});
+  }
+});
+
+// Alterna favorita: si no está, la agrega; si está, la quita.
+const toggleFavorite = async () => {
+  const w = weatherStore.currentWeather;
+  if (!w || savingFav.value) return;
+  savingFav.value = true;
+  try {
+    if (isFav.value) {
+      const existing = favoriteStore.items.find(
+        (f) => f.city.trim().toLowerCase() === w.city.trim().toLowerCase()
+      );
+      if (existing) await favoriteStore.remove(existing.id);
+    } else {
+      await favoriteStore.add(w.city, w.latitude, w.longitude);
+    }
+  } catch {
+    /* noop */
+  } finally {
+    savingFav.value = false;
+  }
+};
 
 const goBack = () => {
   weatherStore.clearState();
@@ -39,6 +78,18 @@ const goBack = () => {
       <!-- Botón volver -->
       <button class="btn-back" @click="goBack" aria-label="Volver al inicio">
         ← Volver
+      </button>
+
+      <!-- Botón favorita (estrella) -->
+      <button
+        class="btn-fav"
+        :class="{ 'btn-fav--on': isFav }"
+        :disabled="savingFav"
+        @click="toggleFavorite"
+        :aria-label="isFav ? 'Quitar de favoritas' : 'Agregar a favoritas'"
+        :title="isFav ? 'Quitar de favoritas' : 'Agregar a favoritas'"
+      >
+        {{ isFav ? '★' : '☆' }}
       </button>
 
       <!-- Ciudad -->
@@ -115,6 +166,26 @@ const goBack = () => {
   transition: background 0.2s;
 }
 .btn-back:hover { background: rgba(255, 255, 255, 0.3); }
+
+/* Botón favorita (estrella), simétrico al de volver */
+.btn-fav {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-fav:hover:not(:disabled) { background: rgba(255, 255, 255, 0.3); transform: scale(1.08); }
+.btn-fav:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-fav--on { color: #ffd94a; }
 
 .city-name {
   margin: 14px 0 0;

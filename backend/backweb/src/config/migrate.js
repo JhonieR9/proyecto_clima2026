@@ -46,6 +46,33 @@ const schema = [
     ],
   },
   {
+    // Ciudades favoritas por usuario. Un usuario no puede repetir la misma
+    // ciudad (índice único user_id + city_key normalizada).
+    table: 'favorites',
+    create: `
+      CREATE TABLE IF NOT EXISTS favorites (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        city VARCHAR(150) NOT NULL,
+        city_key VARCHAR(150) NOT NULL,
+        latitude NUMERIC(9,6),
+        longitude NUMERIC(9,6),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `,
+    columns: [
+      { name: 'user_id',    def: 'INTEGER' },
+      { name: 'city',       def: 'VARCHAR(150) NOT NULL' },
+      { name: 'city_key',   def: 'VARCHAR(150) NOT NULL' },
+      { name: 'latitude',   def: 'NUMERIC(9,6)' },
+      { name: 'longitude',  def: 'NUMERIC(9,6)' },
+      { name: 'created_at', def: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' },
+    ],
+    postStatements: [
+      'CREATE UNIQUE INDEX IF NOT EXISTS favorites_user_city_uidx ON favorites (user_id, city_key)',
+    ],
+  },
+  {
     table: 'weather_cache',
     create: `
       CREATE TABLE IF NOT EXISTS weather_cache (

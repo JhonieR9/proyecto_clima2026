@@ -34,10 +34,14 @@ export const useAuthStore = defineStore('auth', {
       this.user = user;
     },
 
-    // Limpia la sesión en memoria.
+    // Limpia la sesión en memoria (y las favoritas del usuario saliente).
     clearSession() {
       this.accessToken = null;
       this.user = null;
+      // Import dinámico para evitar dependencia circular entre stores.
+      import('./favorite.store').then(({ useFavoriteStore }) => {
+        useFavoriteStore().clear();
+      });
     },
 
     // Registro de un nuevo usuario. No inicia sesión automáticamente:

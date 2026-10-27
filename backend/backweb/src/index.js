@@ -17,6 +17,7 @@ const { notFoundHandler, errorHandler } = require('./middlewares/error.middlewar
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const weatherRoutes = require('./routes/weather.routes');
+const favoriteRoutes = require('./routes/favorite.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -46,6 +47,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/weather', weatherRoutes);
+app.use('/api/favorites', favoriteRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'API corriendo', docs: '/api-docs' });
