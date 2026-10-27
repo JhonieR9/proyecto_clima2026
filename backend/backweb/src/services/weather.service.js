@@ -34,6 +34,14 @@ function cityKeyOf(city) {
     .toLowerCase();
 }
 
+// Ordena las sugerencias del geocoding poniendo Colombia primero, manteniendo
+// el orden de relevancia original dentro de cada grupo (sort estable).
+// Función pura (sin red) para poder testearla aislada.
+function orderSuggestions(results) {
+  const isCO = (r) => r.country_code === 'CO' || r.country === 'Colombia';
+  return [...results].sort((a, b) => Number(isCO(b)) - Number(isCO(a)));
+}
+
 // --- L1: caché en memoria del proceso Node ---
 const memoryCache = new Map(); // key: cityKey -> { data, cachedAt }
 const L1_TTL_MS = FRESH_MS;
@@ -209,12 +217,7 @@ const WeatherService = {
       const { data } = await axios.get(url, { timeout: 5000 });
       const results = data.results || [];
 
-      // Orden: primero Colombia, luego el resto. Dentro de cada grupo se
-      // respeta el orden de relevancia que ya trae Open-Meteo (por población).
-      const isCO = (r) => r.country_code === 'CO' || r.country === 'Colombia';
-      const ordered = [...results].sort((a, b) => Number(isCO(b)) - Number(isCO(a)));
-
-      const top = ordered.slice(0, 6);
+      const top = orderSuggestions(results).slice(0, 6);
       logger.info('weather.suggest', { correlationId, q, count: top.length });
 
       return top.map((r) => ({
@@ -235,3 +238,6 @@ const WeatherService = {
 };
 
 module.exports = WeatherService;
+// Funciones puras expuestas para pruebas unitarias.
+module.exports.cityKeyOf = cityKeyOf;
+module.exports.orderSuggestions = orderSuggestions;
