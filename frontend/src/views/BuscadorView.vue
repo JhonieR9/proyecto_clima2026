@@ -52,13 +52,17 @@ const handleSearch = async (city: string) => {
 
 <style scoped>
 .home-card {
-  background: #ffffff;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
   padding: 36px 32px;
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
   text-align: center;
+  color: #fff;
 }
 
 /* Encabezado */
@@ -67,15 +71,15 @@ const handleSearch = async (city: string) => {
 }
 
 .home-title {
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 700;
-  color: #1e3c72;
+  color: #fff;
   margin: 0 0 6px;
 }
 
 .home-subtitle {
   font-size: 11px;
-  color: #888;
+  color: rgba(255, 255, 255, 0.75);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin: 0;
@@ -84,7 +88,7 @@ const handleSearch = async (city: string) => {
 /* Loading */
 .loading-state {
   margin: 20px 0;
-  color: #666;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 14px;
 }
 
@@ -115,7 +119,7 @@ const handleSearch = async (city: string) => {
 
 /* Hint */
 .hint {
-  color: #aaa;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 13px;
   margin-top: 8px;
 }
