@@ -37,12 +37,12 @@ export function kindFromCondition(condition: string): WeatherKind {
 }
 
 const THEMES: Record<WeatherKind, Omit<WeatherTheme, 'kind'>> = {
-  sunny:  { gradient: 'linear-gradient(160deg, #4a90e2 0%, #f6b73c 100%)', accent: '#f6b73c' },
-  cloudy: { gradient: 'linear-gradient(160deg, #8e9eab 0%, #5c6b7a 100%)', accent: '#8e9eab' },
-  rain:   { gradient: 'linear-gradient(160deg, #4b6cb7 0%, #182848 100%)', accent: '#4b6cb7' },
-  snow:   { gradient: 'linear-gradient(160deg, #83a4d4 0%, #b6fbff 100%)', accent: '#b6fbff' },
-  storm:  { gradient: 'linear-gradient(160deg, #373b44 0%, #4286f4 100%)', accent: '#4286f4' },
-  fog:    { gradient: 'linear-gradient(160deg, #b993d6 0%, #8ca6db 100%)', accent: '#8ca6db' },
+  sunny:  { gradient: 'linear-gradient(160deg, #2980f0 0%, #f6b73c 100%)', accent: '#f6b73c' },
+  cloudy: { gradient: 'linear-gradient(160deg, #6b7b8c 0%, #3a4653 100%)', accent: '#6b7b8c' },
+  rain:   { gradient: 'linear-gradient(160deg, #4b6cb7 0%, #0f1b33 100%)', accent: '#4b6cb7' },
+  snow:   { gradient: 'linear-gradient(160deg, #5f8bc4 0%, #b6fbff 100%)', accent: '#b6fbff' },
+  storm:  { gradient: 'linear-gradient(160deg, #232730 0%, #3a6fd8 100%)', accent: '#3a6fd8' },
+  fog:    { gradient: 'linear-gradient(160deg, #9c7fc4 0%, #6b82b5 100%)', accent: '#6b82b5' },
 };
 
 export function themeFromCondition(condition: string): WeatherTheme {

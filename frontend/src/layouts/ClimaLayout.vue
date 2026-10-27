@@ -49,6 +49,8 @@ import { RouterLink } from 'vue-router';
 
 /* ---------- Navbar ---------- */
 .navbar {
+  position: relative;
+  z-index: 10;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);

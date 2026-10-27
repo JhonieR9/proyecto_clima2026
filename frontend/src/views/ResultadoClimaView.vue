@@ -123,16 +123,19 @@ const goBack = () => {
 </template>
 
 <style scoped>
-/* Escena a pantalla completa con el degradado del clima */
+/* Escena inmersiva: el degradado del clima cubre TODA la ventana, por detrás
+   del navbar/footer del layout. position: fixed la saca del contenedor
+   centrado del layout para ocupar la pantalla completa. */
 .result-scene {
-  width: 100%;
-  min-height: 100%;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
   box-sizing: border-box;
-  border-radius: 20px;
+  overflow-y: auto;
   transition: background 0.6s ease;
 }
 
@@ -142,14 +145,14 @@ const goBack = () => {
   width: 100%;
   max-width: 380px;
   padding: 28px 26px 26px;
-  border-radius: 20px;
+  border-radius: 24px;
   text-align: center;
   color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
 }
 
 .btn-back {
