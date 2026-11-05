@@ -1,7 +1,16 @@
 <!-- frontend/src/layouts/DefaultLayout.vue -->
 <!-- Layout principal: envuelve todas las vistas con navbar y footer -->
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth.store';
+
+const router = useRouter();
+const auth = useAuthStore();
+
+const handleLogout = async () => {
+  await auth.logout();
+  router.push({ name: 'login' });
+};
 </script>
 
 <template>
@@ -17,6 +26,11 @@ import { RouterLink } from 'vue-router';
           <RouterLink to="/" class="nav-link" active-class="nav-link--active" exact>
             Inicio
           </RouterLink>
+          <!-- Sesión: nombre del usuario + botón salir (solo si está autenticado) -->
+          <template v-if="auth.isAuthenticated">
+            <span class="nav-user" v-if="auth.user">👤 {{ auth.user.name }}</span>
+            <button class="nav-logout" @click="handleLogout">Salir</button>
+          </template>
         </nav>
       </div>
     </header>
@@ -100,6 +114,30 @@ import { RouterLink } from 'vue-router';
 .nav-link--active {
   color: #ffffff;
   border-bottom-color: #90caf9;
+}
+
+/* Nombre del usuario autenticado */
+.nav-user {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Botón de cerrar sesión */
+.nav-logout {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nav-logout:hover {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 /* ---------- Contenido ---------- */

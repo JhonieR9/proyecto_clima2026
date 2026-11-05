@@ -53,6 +53,27 @@ app.get('/', (req, res) => {
   res.json({ message: 'API corriendo', docs: '/api-docs' });
 });
 
+// Health check: estado del servidor, la base de datos y la cola de revalidación.
+const pool = require('./config/db');
+const WeatherService = require('./services/weather.service');
+
+app.get('/health', async (_req, res) => {
+  const health = {
+    status: 'ok',
+    uptime: Math.round(process.uptime()),
+    db: 'unknown',
+    revalidationQueue: WeatherService.getRevalidationQueueStats(),
+  };
+  try {
+    await pool.query('SELECT 1');
+    health.db = 'up';
+  } catch (_err) {
+    health.db = 'down';
+    health.status = 'degraded';
+  }
+  res.status(health.status === 'ok' ? 200 : 503).json(health);
+});
+
 // --- Manejo de errores (siempre al final) ---
 app.use(notFoundHandler);
 app.use(errorHandler);
