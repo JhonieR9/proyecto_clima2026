@@ -57,10 +57,18 @@ export const AuthService = {
   },
 
   // Normaliza el mensaje de error del backend para mostrarlo en la UI.
+  // El backend responde { error: { code, message } }, pero toleramos también
+  // formatos antiguos donde `error` fuese un string plano.
   extractError(err: unknown, fallback: string): string {
     if (err instanceof AxiosError) {
-      const body = err.response?.data as { error?: string; message?: string } | undefined;
-      return body?.error ?? body?.message ?? fallback;
+      const body = err.response?.data as
+        | { error?: { message?: string } | string; message?: string }
+        | undefined;
+      if (body) {
+        if (typeof body.error === 'string') return body.error;
+        if (body.error?.message) return body.error.message;
+        if (body.message) return body.message;
+      }
     }
     return fallback;
   },
