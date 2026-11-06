@@ -3,11 +3,21 @@
    (hero, next-steps, #app con ancho fijo, etc.) que dejaba franjas blancas. */
 
 :root {
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'Poppins', 'Inter', system-ui, sans-serif;
   font: 16px/1.5 var(--sans);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Los títulos usan Poppins */
+h1, h2, h3,
+.city-name,
+.navbar-brand,
+.home-title,
+.auth-title {
+  font-family: var(--heading);
 }
 
 * {
