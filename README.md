@@ -117,6 +117,20 @@ npm run dev              # Vite → http://localhost:5173
 
 ---
 
+## Usuario administrador (RBAC)
+
+El registro público crea usuarios con rol `user`. Para tener un administrador
+(y poder probar el control de acceso por rol), ejecuta:
+
+```bash
+cd backend/backweb
+npm run seed:admin
+```
+
+Crea el admin con las credenciales de `.env` (`ADMIN_EMAIL` / `ADMIN_PASSWORD`;
+por defecto `admin@clima.com` / `Admin12345`). Un admin puede acceder a
+`GET /api/users`; un usuario normal recibe `403 Forbidden`.
+
 ## Pruebas
 
 ```bash
