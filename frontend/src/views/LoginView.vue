@@ -59,7 +59,12 @@ const handleSubmit = async () => {
         />
       </label>
 
-      <div v-if="auth.error" class="error-badge" role="alert">❌ {{ auth.error }}</div>
+      <Transition name="alert">
+        <div v-if="auth.error" class="alert alert--error" role="alert">
+          <span class="alert-icon" aria-hidden="true">!</span>
+          <span class="alert-text">{{ auth.error }}</span>
+        </div>
+      </Transition>
 
       <button type="submit" class="btn-primary" :disabled="auth.loading">
         {{ auth.loading ? 'Entrando...' : 'Entrar' }}
@@ -162,13 +167,49 @@ const handleSubmit = async () => {
   cursor: not-allowed;
 }
 
-.error-badge {
-  background: rgba(198, 40, 40, 0.9);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  padding: 10px 14px;
+/* Aviso elegante (error) */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 12px;
   font-size: 13px;
+  font-weight: 500;
+  backdrop-filter: blur(6px);
+}
+
+.alert--error {
+  background: rgba(220, 38, 38, 0.22);
+  border: 1px solid rgba(248, 113, 113, 0.5);
+  color: #fff;
+}
+
+.alert-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 13px;
+  background: rgba(248, 113, 113, 0.9);
+  color: #fff;
+}
+
+.alert-text { line-height: 1.35; }
+
+/* Animación de entrada/salida del aviso */
+.alert-enter-active,
+.alert-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.alert-enter-from,
+.alert-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 
 .auth-foot {

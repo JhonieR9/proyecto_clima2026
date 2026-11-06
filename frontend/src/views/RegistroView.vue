@@ -76,10 +76,18 @@ const handleSubmit = async () => {
         />
       </label>
 
-      <div v-if="auth.error" class="error-badge" role="alert">❌ {{ auth.error }}</div>
-      <div v-if="success" class="success-badge" role="status">
-        ✅ Cuenta creada. Redirigiendo al login...
-      </div>
+      <Transition name="alert">
+        <div v-if="auth.error" class="alert alert--error" role="alert">
+          <span class="alert-icon" aria-hidden="true">!</span>
+          <span class="alert-text">{{ auth.error }}</span>
+        </div>
+      </Transition>
+      <Transition name="alert">
+        <div v-if="success" class="alert alert--success" role="status">
+          <span class="alert-icon" aria-hidden="true">✓</span>
+          <span class="alert-text">Cuenta creada. Redirigiendo al login...</span>
+        </div>
+      </Transition>
 
       <button type="submit" class="btn-primary" :disabled="auth.loading">
         {{ auth.loading ? 'Creando...' : 'Registrarme' }}
@@ -182,22 +190,57 @@ const handleSubmit = async () => {
   cursor: not-allowed;
 }
 
-.error-badge {
-  background: rgba(198, 40, 40, 0.9);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  padding: 10px 14px;
+/* Avisos elegantes (error / éxito) */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 12px;
   font-size: 13px;
+  font-weight: 500;
+  backdrop-filter: blur(6px);
 }
 
-.success-badge {
-  background: rgba(27, 122, 67, 0.9);
+.alert--error {
+  background: rgba(220, 38, 38, 0.22);
+  border: 1px solid rgba(248, 113, 113, 0.5);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  padding: 10px 14px;
+}
+
+.alert--success {
+  background: rgba(22, 163, 74, 0.22);
+  border: 1px solid rgba(74, 222, 128, 0.5);
+  color: #fff;
+}
+
+.alert-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
   font-size: 13px;
+  color: #fff;
+}
+
+.alert--error .alert-icon { background: rgba(248, 113, 113, 0.9); }
+.alert--success .alert-icon { background: rgba(74, 222, 128, 0.9); }
+
+.alert-text { line-height: 1.35; }
+
+/* Animación de entrada/salida */
+.alert-enter-active,
+.alert-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.alert-enter-from,
+.alert-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 
 .auth-foot {

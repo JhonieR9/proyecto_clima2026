@@ -43,7 +43,7 @@ const handleLogout = async () => {
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
       <p>
-        Proyecto de Grado &mdash; Sistema de Caching con PostgreSQL &mdash;
+        ClimaApp &mdash; Sistema de Caching con PostgreSQL &mdash;
         <span class="footer-year">2026</span>
       </p>
     </footer>
