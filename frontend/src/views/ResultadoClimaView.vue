@@ -111,6 +111,7 @@ const goBack = () => {
       <FilaCoordenadas
         :latitude="weatherStore.currentWeather.latitude"
         :longitude="weatherStore.currentWeather.longitude"
+        :humidity="weatherStore.currentWeather.humidity"
       />
 
       <!-- Indicador de origen del dato -->

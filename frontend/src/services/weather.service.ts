@@ -7,6 +7,8 @@ export interface WeatherData {
   latitude: number;
   longitude: number;
   temperature: number;
+  /** Humedad relativa en % (puede faltar en datos antiguos). */
+  humidity: number | null;
   condition_text: string;
 }
 
