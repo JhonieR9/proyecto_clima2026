@@ -82,6 +82,7 @@ const schema = [
         latitude NUMERIC(9,6) NOT NULL,
         longitude NUMERIC(9,6) NOT NULL,
         temperature NUMERIC(5,2) NOT NULL,
+        humidity SMALLINT,
         condition_text VARCHAR(100) NOT NULL,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -94,6 +95,8 @@ const schema = [
       { name: 'latitude',       def: 'NUMERIC(9,6) NOT NULL' },
       { name: 'longitude',      def: 'NUMERIC(9,6) NOT NULL' },
       { name: 'temperature',    def: 'NUMERIC(5,2) NOT NULL' },
+      // Humedad relativa en % (nullable: filas antiguas no la tienen).
+      { name: 'humidity',       def: 'SMALLINT' },
       { name: 'condition_text', def: 'VARCHAR(100) NOT NULL' },
       { name: 'updated_at',     def: 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' },
     ],

@@ -20,8 +20,10 @@ const revalidationQueue = new TaskQueue({
 });
 
 // --- Umbrales de frescura (Stale-While-Revalidate) ---
-const FRESH_MS = 30 * 60 * 1000;        // < 30 min: dato fresco, se sirve directo
-const STALE_MS = 24 * 60 * 60 * 1000;   // 30 min a 24 h: se sirve y se revalida
+// Open-Meteo actualiza el clima actual cada 15 min, así que no tiene sentido
+// considerar "fresco" un dato más viejo que eso.
+const FRESH_MS = 15 * 60 * 1000;        // < 15 min: dato fresco, se sirve directo
+const STALE_MS = 24 * 60 * 60 * 1000;   // 15 min a 24 h: se sirve y se revalida
 
 // Normaliza el nombre de ciudad a una clave de caché estable: minúsculas, sin
 // acentos y sin espacios sobrantes. Así "Bogota", "bogotá" y "  BOGOTÁ " caen
@@ -86,20 +88,35 @@ async function fetchFromApi(city, correlationId) {
 
   const { latitude, longitude, name: formattedCity } = geoResponse.data.results[0];
 
-  const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+  // `current` permite pedir variables concretas, incluida la humedad relativa.
+  const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto`;
   const weatherResponse = await axios.get(weatherUrl, { timeout: 5000 });
 
-  const current = weatherResponse.data.current_weather;
+  const current = weatherResponse.data.current;
   const data = {
     city: formattedCity,
     latitude,
     longitude,
-    temperature: current.temperature,
-    condition_text: getWeatherDescription(current.weathercode),
+    temperature: current.temperature_2m,
+    humidity: current.relative_humidity_2m ?? null,
+    condition_text: getWeatherDescription(current.weather_code),
   };
 
   logger.info('weather.api_fetch', { correlationId, city: formattedCity });
   return data;
+}
+
+// Convierte una fila de weather_cache al formato que devuelve la API.
+// Normaliza los NUMERIC de Postgres (llegan como string).
+function rowToData(row) {
+  return {
+    city: row.city,
+    latitude: Number(row.latitude),
+    longitude: Number(row.longitude),
+    temperature: Number(row.temperature),
+    humidity: row.humidity == null ? null : Number(row.humidity),
+    condition_text: row.condition_text,
+  };
 }
 
 // Persiste en L2 (Postgres) y refresca L1. Usa la clave normalizada de la
@@ -107,7 +124,8 @@ async function fetchFromApi(city, correlationId) {
 async function persist(city, data) {
   const key = cityKeyOf(city);
   await WeatherCache.upsertWeather(
-    key, data.city, data.latitude, data.longitude, data.temperature, data.condition_text
+    key, data.city, data.latitude, data.longitude, data.temperature,
+    data.condition_text, data.humidity
   );
   l1Set(key, data);
 }
@@ -130,24 +148,20 @@ const WeatherService = {
     const cached = await WeatherCache.findByKey(key); // trae la fila aunque esté vieja
     if (cached) {
       const ageMs = Date.now() - new Date(cached.updated_at).getTime();
+      const data = rowToData(cached);
 
-      // Normaliza tipos NUMERIC de Postgres (vienen como string).
-      const data = {
-        city: cached.city,
-        latitude: Number(cached.latitude),
-        longitude: Number(cached.longitude),
-        temperature: Number(cached.temperature),
-        condition_text: cached.condition_text,
-      };
+      // Filas guardadas antes de existir la columna humedad: se refrescan desde
+      // la API en vez de mostrarse incompletas (cae al bloque "EXPIRADO" de abajo).
+      const hasHumidity = cached.humidity != null;
 
       // FRESH: servir directo y poblar L1.
-      if (ageMs <= FRESH_MS) {
+      if (hasHumidity && ageMs <= FRESH_MS) {
         l1Set(key, data);
         return { source: 'cache', data };
       }
 
       // STALE: servir YA y revalidar en segundo plano (no bloquea la respuesta).
-      if (ageMs <= STALE_MS) {
+      if (hasHumidity && ageMs <= STALE_MS) {
         this.revalidateInBackground(city, correlationId);
         return { source: 'stale', data };
       }
@@ -164,16 +178,7 @@ const WeatherService = {
         logger.warn('weather.api_failed_serving_stale', {
           correlationId, city, reason: err.message,
         });
-        return {
-          source: 'stale_fallback',
-          data: {
-            city: cached.city,
-            latitude: Number(cached.latitude),
-            longitude: Number(cached.longitude),
-            temperature: Number(cached.temperature),
-            condition_text: cached.condition_text,
-          },
-        };
+        return { source: 'stale_fallback', data: rowToData(cached) };
       }
       // Si es un error de negocio (404 ciudad no encontrada), se propaga tal cual.
       if (err instanceof AppError) throw err;

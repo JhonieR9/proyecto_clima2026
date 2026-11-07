@@ -13,7 +13,7 @@ const WeatherCache = {
   // El servicio decide si está fresca, stale o expirada usando updated_at.
   async findByKey(cityKey) {
     const query = `
-      SELECT city, city_key, latitude, longitude, temperature, condition_text, updated_at
+      SELECT city, city_key, latitude, longitude, temperature, humidity, condition_text, updated_at
       FROM weather_cache
       WHERE city_key = $1
       LIMIT 1;
@@ -23,10 +23,10 @@ const WeatherCache = {
   },
 
   // Inserta o actualiza el clima de una ciudad (Upsert por city_key).
-  async upsertWeather(cityKey, city, latitude, longitude, temperature, conditionText) {
+  async upsertWeather(cityKey, city, latitude, longitude, temperature, conditionText, humidity) {
     const query = `
-      INSERT INTO weather_cache (city_key, city, latitude, longitude, temperature, condition_text, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      INSERT INTO weather_cache (city_key, city, latitude, longitude, temperature, condition_text, humidity, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
       ON CONFLICT (city_key)
       DO UPDATE SET
         city = EXCLUDED.city,
@@ -34,9 +34,10 @@ const WeatherCache = {
         longitude = EXCLUDED.longitude,
         temperature = EXCLUDED.temperature,
         condition_text = EXCLUDED.condition_text,
+        humidity = EXCLUDED.humidity,
         updated_at = NOW();
     `;
-    const values = [cityKey, city, latitude, longitude, temperature, conditionText];
+    const values = [cityKey, city, latitude, longitude, temperature, conditionText, humidity ?? null];
     await pool.query(query, values);
   },
 };

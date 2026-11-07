@@ -4,6 +4,8 @@
 defineProps<{
   latitude: number;
   longitude: number;
+  /** Humedad relativa en %. Si no viene, no se muestra la casilla. */
+  humidity?: number | null;
 }>();
 </script>
 
@@ -17,14 +19,19 @@ defineProps<{
       <span class="geo-label">Longitud</span>
       <span class="geo-value">{{ longitude }}</span>
     </div>
+    <div class="geo-chip" v-if="humidity != null">
+      <span class="geo-label">Humedad</span>
+      <span class="geo-value">{{ humidity }}%</span>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .geo-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 24px;
 }
 
