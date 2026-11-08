@@ -101,14 +101,19 @@ src/
 
 | Nivel | Dónde | Para qué |
 |-------|-------|----------|
-| **L1** | `Map` en memoria del proceso | Cero latencia en hits calientes (TTL 30 min) |
+| **L1** | `Map` en memoria del proceso | Cero latencia en hits calientes (TTL 15 min) |
 | **L2** | Tabla `weather_cache` en PostgreSQL | Persistencia entre reinicios |
+
+La clave de caché es el nombre de la ciudad **normalizado** (minúsculas y sin
+acentos), así "Bogota" y "Bogotá" comparten la misma entrada.
 
 Umbrales de frescura (**Stale-While-Revalidate**):
 
-- **FRESH** (≤ 30 min): se sirve directo. `source: cache` / `memory`.
-- **STALE** (30 min – 24 h): se sirve **al instante** y se **revalida en segundo
-  plano** contra Open-Meteo. `source: stale`.
+- **FRESH** (≤ 15 min): se sirve directo. `source: cache` / `memory`.
+- **STALE** (15 min – 24 h): se sirve **al instante** y se **revalida en segundo
+  plano** contra Open-Meteo mediante una **cola de tareas en memoria**
+  (`utils/taskQueue.js`: concurrencia limitada, de-duplicación y reintentos).
+  `source: stale`.
 - **EXPIRADO** (> 24 h) o sin caché: se consulta la API. `source: api_fresh`.
 
 **Tolerancia a caídas**: si Open-Meteo falla pero existe un dato previo (aunque
@@ -156,7 +161,20 @@ API pública usada: **Open-Meteo** (geocoding + forecast), gratuita y sin API ke
 ### Weather (`/api/weather`)
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | `/?city=Bogota` | Clima con caché multinivel + SWR |
+| GET | `/?city=Bogota` | Clima (temperatura, humedad, condición) con caché multinivel + SWR |
+| GET | `/suggest?q=cal` | Autocompletado de ciudades (Colombia primero) |
+
+### Favorites (`/api/favorites`) — requieren Bearer
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/` | Lista las ciudades favoritas del usuario |
+| POST | `/` | Agrega una favorita (sin duplicados por usuario) |
+| DELETE | `/:id` | Elimina una favorita propia |
+
+### Salud
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/health` | Estado del servidor, la base de datos y la cola de revalidación |
 
 Documentación interactiva: **`/api-docs`** (Swagger).
 
