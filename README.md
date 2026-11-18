@@ -6,6 +6,9 @@ autenticación segura y ciudades favoritas por usuario. Compuesta por una API RE
 
 API meteorológica: [Open-Meteo](https://open-meteo.com) (gratuita, sin API key).
 
+**¿Quieres entender el código?** Lee la [guía del código](docs/GUIA_DEL_CODIGO.md): explica qué hace
+cada archivo, cómo viaja una petición y dónde cambiar cada cosa.
+
 ---
 
 ## Características
