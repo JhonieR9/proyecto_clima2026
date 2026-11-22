@@ -1,5 +1,6 @@
 // backend/backweb/tests/weather.logic.test.js
 // Pruebas de las funciones puras del servicio de clima: normalización y sugerencias.
+// Conectado con: weather.service.js
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { cityKeyOf, orderSuggestions } = require('../src/services/weather.service');

@@ -1,5 +1,6 @@
 // frontend/src/services/http.ts
 // Instancia central de Axios con interceptores para adjuntar token y renovar sesión.
+// Conectado con: auth.service.ts, favorite.service.ts, main.ts
 import axios, {
   AxiosError,
   type AxiosInstance,

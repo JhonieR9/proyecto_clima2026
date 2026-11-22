@@ -1,5 +1,6 @@
 <!-- frontend/src/views/BuscadorView.vue -->
 <!-- Vista principal del buscador de clima con lista de ciudades favoritas. -->
+<!-- Conectado con: weather.store.ts, favorite.store.ts, CajaBusqueda.vue -->
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';

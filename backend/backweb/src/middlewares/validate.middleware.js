@@ -1,5 +1,6 @@
 // backend/backweb/src/middlewares/validate.middleware.js
 // Valida y sanea partes del request (body, query, params) con un esquema Zod.
+// Conectado con: AppError.js, auth.routes.js, weather.routes.js, favorite.routes.js
 const AppError = require('../utils/AppError');
 
 /**

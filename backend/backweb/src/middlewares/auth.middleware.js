@@ -1,5 +1,6 @@
 // backend/backweb/src/middlewares/auth.middleware.js
 // Verifica el token de acceso y controla los permisos por rol en cada ruta.
+// Conectado con: AppError.js, token.js, auth.routes.js, user.routes.js, favorite.routes.js
 const AppError = require('../utils/AppError');
 const { verifyAccessToken } = require('../utils/token');
 

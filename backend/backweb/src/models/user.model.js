@@ -1,5 +1,6 @@
 // backend/backweb/src/models/user.model.js
 // Repositorio de usuarios: consultas, creación y actualización en la base de datos.
+// Conectado con: db.js, auth.service.js, user.controller.js
 const pool = require('../config/db');
 
 // Factor de coste de bcrypt. 12 es el minimo recomendado hoy; configurable por env.

@@ -1,5 +1,6 @@
 <!-- frontend/src/views/RegistroView.vue -->
 <!-- Muestra el formulario de registro y redirige al login tras crear la cuenta. -->
+<!-- Conectado con: auth.store.ts -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';

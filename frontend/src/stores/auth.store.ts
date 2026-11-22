@@ -1,5 +1,6 @@
 // frontend/src/stores/auth.store.ts
 // Almacena el token de acceso en memoria y el estado del usuario autenticado.
+// Conectado con: auth.service.ts, ClimaLayout.vue, router/index.ts, LoginView.vue, RegistroView.vue, main.ts
 import { defineStore } from 'pinia';
 import { AuthService, type AuthUser } from '../services/auth.service';
 

@@ -1,5 +1,6 @@
 // backend/backweb/src/routes/weather.routes.js
 // Define las rutas de consulta y sugerencia de ciudades para el clima.
+// Conectado con: weather.controller.js, validate.middleware.js, weather.schema.js, index.js
 const express = require('express');
 const router = express.Router();
 const WeatherController = require('../controllers/weather.controller');

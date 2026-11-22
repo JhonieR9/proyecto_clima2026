@@ -1,5 +1,6 @@
 <!-- frontend/src/views/ResultadoClimaView.vue -->
 <!-- Muestra la tarjeta de clima con ícono animado y fondo según la condición. -->
+<!-- Conectado con: weather.store.ts, favorite.store.ts, FilaCoordenadas.vue, InsigniaOrigen.vue, WeatherIcon.vue, weatherTheme.ts -->
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';

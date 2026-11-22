@@ -1,5 +1,6 @@
 // backend/backweb/src/controllers/auth.controller.js
 // Recibe las peticiones de autenticación y gestiona la cookie del refresh token.
+// Conectado con: auth.service.js, auth.routes.js
 const AuthService = require('../services/auth.service');
 
 const REFRESH_COOKIE = 'refreshToken';

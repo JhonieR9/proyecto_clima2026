@@ -1,5 +1,6 @@
 // frontend/src/stores/favorite.store.ts
 // Gestiona el estado de las ciudades favoritas del usuario en la aplicación.
+// Conectado con: favorite.service.ts, BuscadorView.vue, ResultadoClimaView.vue
 import { defineStore } from 'pinia';
 import { FavoriteService, type Favorite } from '../services/favorite.service';
 

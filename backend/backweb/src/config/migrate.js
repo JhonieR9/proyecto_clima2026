@@ -1,5 +1,6 @@
 // backend/backweb/src/config/migrate.js
 // Ejecuta las migraciones de base de datos al arrancar el servidor.
+// Conectado con: db.js, index.js
 const pool = require('./db');
 
 // Agrega columnas aquí para que se creen automáticamente al arrancar

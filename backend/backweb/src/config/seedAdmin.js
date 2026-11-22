@@ -1,5 +1,6 @@
 // backend/backweb/src/config/seedAdmin.js
 // Crea o asciende a administrador un usuario inicial para controlar el acceso por rol.
+// Conectado con: db.js, migrate.js
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const pool = require('./db');

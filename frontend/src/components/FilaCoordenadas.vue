@@ -1,5 +1,6 @@
 <!-- frontend/src/components/FilaCoordenadas.vue -->
 <!-- Muestra latitud, longitud y humedad de la ciudad consultada en chips. -->
+<!-- Conectado con: ResultadoClimaView.vue -->
 <script setup lang="ts">
 defineProps<{
   latitude: number;

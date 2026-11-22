@@ -1,5 +1,6 @@
 // frontend/src/services/favorite.service.ts
 // Llama al backend para listar, agregar y eliminar ciudades favoritas del usuario.
+// Conectado con: http.ts, favorite.store.ts
 import { http } from './http';
 
 export interface Favorite {

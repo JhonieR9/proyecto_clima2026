@@ -1,5 +1,6 @@
 // backend/backweb/src/validators/weather.schema.js
 // Esquemas Zod para validar los parámetros de búsqueda y sugerencia de clima.
+// Conectado con: weather.routes.js, validators.test.js
 const { z } = require('zod');
 
 const weatherQuerySchema = z.object({
