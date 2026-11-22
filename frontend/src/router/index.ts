@@ -1,4 +1,5 @@
 // frontend/src/router/index.ts
+// Configura las rutas de la aplicación con guardias de autenticación.
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import { useWeatherStore } from '../stores/weather.store';

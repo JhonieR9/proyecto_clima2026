@@ -1,6 +1,5 @@
 // backend/backweb/src/middlewares/error.middleware.js
-// Manejo GLOBAL de excepciones. CORE: "Manejo global de excepciones".
-// Es el último middleware; captura cualquier error lanzado en la cadena.
+// Captura y formatea todos los errores de la aplicación antes de responder.
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
 

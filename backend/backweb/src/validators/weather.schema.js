@@ -1,5 +1,5 @@
 // backend/backweb/src/validators/weather.schema.js
-// Validación del query de consulta de clima. CORE: validación con schemas + anti-inyección.
+// Esquemas Zod para validar los parámetros de búsqueda y sugerencia de clima.
 const { z } = require('zod');
 
 const weatherQuerySchema = z.object({

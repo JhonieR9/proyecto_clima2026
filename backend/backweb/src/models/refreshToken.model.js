@@ -1,5 +1,5 @@
 // backend/backweb/src/models/refreshToken.model.js
-// Repositorio de refresh tokens para rotación y revocación de sesiones.
+// Repositorio de refresh tokens: guarda, busca y revoca tokens de sesión.
 const pool = require('../config/db');
 
 // Cada metodo acepta un `executor` opcional (cliente de transaccion). Si no se

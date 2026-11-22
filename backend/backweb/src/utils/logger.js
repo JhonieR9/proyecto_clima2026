@@ -1,6 +1,5 @@
 // backend/backweb/src/utils/logger.js
-// Logger estructurado (JSON) con soporte para x-correlation-id.
-// Cumple el requisito del CORE: "logs estructurados con x-correlation-id".
+// Emite logs estructurados en JSON con soporte de ID de correlación por petición.
 
 /**
  * Emite una línea de log en formato JSON hacia stdout/stderr.

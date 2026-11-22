@@ -1,7 +1,5 @@
 // frontend/src/services/http.ts
-// Instancia central de Axios. CORE: "Axios tipado con interceptores y
-// reintentos automáticos". Añade el Access Token (memoria) a cada petición y,
-// ante un 401, intenta rotar el refresh token una vez y reintenta la petición.
+// Instancia central de Axios con interceptores para adjuntar token y renovar sesión.
 import axios, {
   AxiosError,
   type AxiosInstance,

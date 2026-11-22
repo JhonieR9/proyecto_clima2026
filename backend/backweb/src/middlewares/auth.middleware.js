@@ -1,7 +1,5 @@
 // backend/backweb/src/middlewares/auth.middleware.js
-// Middlewares de Autenticación y Autorización.
-// CORE: "Autorización RBAC/ABAC granular a nivel de endpoint mediante Middlewares
-//        validando pertenencia del recurso (resource ownership)".
+// Verifica el token de acceso y controla los permisos por rol en cada ruta.
 const AppError = require('../utils/AppError');
 const { verifyAccessToken } = require('../utils/token');
 

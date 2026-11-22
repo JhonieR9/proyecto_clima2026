@@ -1,5 +1,5 @@
 // backend/backweb/src/controllers/weather.controller.js
-// Controlador de clima: delega la lógica en WeatherService y traduce HTTP.
+// Recibe las peticiones de clima y delega la lógica al servicio de clima.
 const WeatherService = require('../services/weather.service');
 
 const WeatherController = {

@@ -1,5 +1,5 @@
 // backend/backweb/src/validators/auth.schema.js
-// Esquemas de validación con Zod. CORE: "Validación estricta con schemas (Zod/Joi)".
+// Esquemas Zod para validar los datos de registro e inicio de sesión.
 const { z } = require('zod');
 
 // Registro de usuario
@@ -17,7 +17,7 @@ const registerSchema = z.object({
     .max(150),
   password: z
     .string({ required_error: 'La contraseña es obligatoria' })
-    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .min(12,'La contraseña debe tener al menos 12 caracteres')
     .max(72, 'La contraseña es demasiado larga'), // límite de bcrypt
 });
 
@@ -27,4 +27,4 @@ const loginSchema = z.object({
   password: z.string().min(1, 'La contraseña es obligatoria'),
 });
 
-module.exports = { registerSchema, loginSchema };
+module.exports = { registerSchema, loginSchema }; 

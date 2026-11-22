@@ -1,5 +1,5 @@
 <!-- frontend/src/views/LoginView.vue -->
-<!-- Inicio de sesión. Usa el auth store (token en memoria + cookie HttpOnly). -->
+<!-- Muestra el formulario de inicio de sesión y redirige al buscador tras autenticarse. -->
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useRouter, useRoute, RouterLink } from 'vue-router';

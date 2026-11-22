@@ -1,6 +1,5 @@
 // backend/backweb/src/controllers/favorite.controller.js
-// Controlador de ciudades favoritas. Todas las operaciones son del usuario
-// autenticado (req.user.id lo pone el middleware authenticate).
+// Gestiona las peticiones de ciudades favoritas del usuario autenticado.
 const FavoriteModel = require('../models/favorite.model');
 const WeatherService = require('../services/weather.service');
 const AppError = require('../utils/AppError');

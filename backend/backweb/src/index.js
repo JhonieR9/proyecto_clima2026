@@ -1,4 +1,5 @@
 // backend/backweb/src/index.js
+// Arranca el servidor Express y registra middlewares, rutas y migraciones.
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');

@@ -1,6 +1,5 @@
 // backend/backweb/src/middlewares/correlationId.middleware.js
-// Asigna un x-correlation-id a cada request para trazar logs de punta a punta.
-// CORE: "logs estructurados con x-correlation-id".
+// Asigna un ID único a cada petición para rastrear su flujo en los logs.
 const { randomUUID } = require('crypto');
 const logger = require('../utils/logger');
 

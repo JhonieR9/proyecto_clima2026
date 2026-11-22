@@ -1,6 +1,5 @@
 <!-- frontend/src/components/CajaBusqueda.vue -->
-<!-- Buscador con AUTOCOMPLETADO: al escribir (desde 3 letras) sugiere ciudades
-     vía /api/weather/suggest; al seleccionar una, emite la búsqueda del clima. -->
+<!-- Campo de búsqueda con autocompletado de ciudades al escribir tres letras. -->
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from 'vue';
 import { WeatherService, type CitySuggestion } from '../services/weather.service';
@@ -19,7 +18,7 @@ const open = ref(false);          // ¿desplegable visible?
 const highlighted = ref(-1);      // índice resaltado para navegar con teclado
 const loadingSuggest = ref(false);
 
-const MIN_CHARS = 3;              // desde cuántas letras pedimos sugerencias
+const MIN_CHARS = 2;              // desde cuántas letras pedimos sugerencias
 const DEBOUNCE_MS = 300;
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 // Token para ignorar respuestas viejas que llegan tarde (race condition).

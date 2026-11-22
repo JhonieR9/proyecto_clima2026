@@ -1,8 +1,5 @@
 // frontend/src/utils/weatherTheme.ts
-// Mapea la condición del clima (texto que devuelve el backend) a:
-//   - un tipo de ícono (para WeatherIcon.vue)
-//   - un tema de color (degradado de fondo)
-// Así el fondo y el ícono cambian según el clima.
+// Traduce la condición del clima a un tipo de ícono y un tema de color de fondo.
 
 export type WeatherKind =
   | 'sunny'      // despejado

@@ -1,9 +1,5 @@
 // backend/backweb/src/services/weather.service.js
-// Capa de SERVICIO del clima. Implementa la estrategia de caching prometida:
-//   - L1: caché en memoria (Map) -> cero latencia en hits calientes.
-//   - L2: caché en PostgreSQL (tabla weather_cache).
-//   - Stale-While-Revalidate: sirve dato "stale" al instante y refresca en 2º plano.
-//   - Tolerancia a caídas: si Open-Meteo falla, se devuelve el último dato conocido.
+// Obtiene datos de clima usando caché en memoria, caché en BD y la API externa.
 const axios = require('axios');
 const WeatherCache = require('../models/weatherCache.model');
 const AppError = require('../utils/AppError');
@@ -222,7 +218,7 @@ const WeatherService = {
       const { data } = await axios.get(url, { timeout: 5000 });
       const results = data.results || [];
 
-      const top = orderSuggestions(results).slice(0, 6);
+      const top = orderSuggestions(results).slice(0, 8);
       logger.info('weather.suggest', { correlationId, q, count: top.length });
 
       return top.map((r) => ({

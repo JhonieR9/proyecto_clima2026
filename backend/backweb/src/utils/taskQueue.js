@@ -1,13 +1,5 @@
 // backend/backweb/src/utils/taskQueue.js
-// Cola de tareas en memoria para trabajo asíncrono en segundo plano.
-// CORE: "colas en memoria/Redis para tareas asíncronas".
-//
-// Características:
-//   - Concurrencia limitada (procesa N tareas a la vez, no todas de golpe).
-//   - De-duplicación por clave: si una tarea con la misma clave ya está en la
-//     cola o ejecutándose, no se encola de nuevo (evita revalidaciones repetidas).
-//   - Reintentos con backoff ante fallo transitorio.
-//   - Logs estructurados con correlationId para trazabilidad.
+// Cola en memoria con concurrencia limitada, deduplicación y reintentos automáticos.
 //
 // Es una alternativa en memoria (sin dependencias) a una cola tipo Redis/Bull.
 // Para producción multi-instancia se sustituiría por Redis, pero la interfaz

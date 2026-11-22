@@ -1,7 +1,5 @@
 // backend/backweb/src/services/auth.service.js
-// Capa de SERVICIO de autenticación. CORE: "Arquitectura Limpia por capas
-// (Controladores, Servicios, Repositorios)". Aquí vive la lógica de negocio;
-// el controlador solo traduce HTTP <-> servicio.
+// Lógica de negocio de autenticación: registro, login y rotación de tokens.
 const { randomUUID } = require('crypto');
 const pool = require('../config/db');
 const UserModel = require('../models/user.model');

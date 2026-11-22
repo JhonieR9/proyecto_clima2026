@@ -1,11 +1,5 @@
 // backend/backweb/src/models/weatherCache.model.js
-// Repositorio del caché de clima (L2 en PostgreSQL).
-// Nota: la decisión de "fresco vs stale" vive en la capa de servicio
-// (Stale-While-Revalidate), por eso aquí devolvemos la fila SIN filtrar por edad.
-//
-// La búsqueda y el upsert se hacen por `city_key`: una clave normalizada
-// (minúsculas y sin acentos) que calcula el servicio. Así "Bogota" y "Bogotá"
-// resuelven a la MISMA fila y la caché acierta aunque el usuario no ponga tildes.
+// Repositorio del caché de clima almacenado en PostgreSQL (nivel L2).
 const pool = require('../config/db');
 
 const WeatherCache = {

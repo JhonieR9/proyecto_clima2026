@@ -1,6 +1,5 @@
 // frontend/src/services/auth.service.ts
-// Servicio de AUTENTICACIÓN tipado (cero 'any'). Traduce las respuestas del
-// backend ({ success, data }) a tipos estrictos que consume el store.
+// Llama al backend para registrar, iniciar sesión y cerrar sesión de usuarios.
 import { AxiosError } from 'axios';
 import { http } from './http';
 

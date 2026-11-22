@@ -1,7 +1,5 @@
 // backend/backweb/src/utils/AppError.js
-// Error de aplicación tipado. Permite lanzar errores con un statusCode HTTP
-// y un código semántico, para que el manejador global de excepciones
-// responda de forma consistente (CORE: "manejo global de excepciones").
+// Clase de error tipado con código HTTP y código semántico para respuestas uniformes.
 
 class AppError extends Error {
   /**

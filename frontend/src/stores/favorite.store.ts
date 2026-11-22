@@ -1,4 +1,5 @@
 // frontend/src/stores/favorite.store.ts
+// Gestiona el estado de las ciudades favoritas del usuario en la aplicación.
 import { defineStore } from 'pinia';
 import { FavoriteService, type Favorite } from '../services/favorite.service';
 

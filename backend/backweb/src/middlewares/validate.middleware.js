@@ -1,7 +1,5 @@
 // backend/backweb/src/middlewares/validate.middleware.js
-// Middleware genérico de validación con Zod.
-// Valida una parte del request ('body' | 'query' | 'params') contra un schema
-// y reemplaza el valor por el dato ya saneado/transformado por Zod.
+// Valida y sanea partes del request (body, query, params) con un esquema Zod.
 const AppError = require('../utils/AppError');
 
 /**
