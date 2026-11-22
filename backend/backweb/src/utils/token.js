@@ -1,6 +1,5 @@
 // backend/backweb/src/utils/token.js
-// Generación y verificación de los dos tokens del esquema de autenticación.
-// CORE: "Flujo de doble token con Access Token en memoria y Refresh Token rotativo".
+// Genera y verifica el access token y el refresh token JWT del sistema de sesiones.
 const jwt = require('jsonwebtoken');
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'dev_access_secret';

@@ -1,4 +1,5 @@
 // frontend/src/services/weather.service.ts
+// Consulta el clima y las sugerencias de ciudades al backend.
 import axios from 'axios';
 
 // Definimos la estructura estricta de los datos del clima según la rúbrica (Cero 'any')

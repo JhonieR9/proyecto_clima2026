@@ -1,7 +1,5 @@
 // backend/backweb/src/controllers/auth.controller.js
-// Controlador de autenticación. Solo traduce HTTP <-> servicio y gestiona la
-// cookie HttpOnly del refresh token. CORE: "Refresh Token rotativo en cookies
-// seguras (HttpOnly, SameSite=Strict, Secure)".
+// Recibe las peticiones de autenticación y gestiona la cookie del refresh token.
 const AuthService = require('../services/auth.service');
 
 const REFRESH_COOKIE = 'refreshToken';

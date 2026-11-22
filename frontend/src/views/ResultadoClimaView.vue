@@ -1,6 +1,5 @@
 <!-- frontend/src/views/ResultadoClimaView.vue -->
-<!-- Vista de resultado: tarjeta de clima con ícono animado y fondo que cambia
-     según la condición (soleado, lluvia, nublado, nieve, tormenta, niebla). -->
+<!-- Muestra la tarjeta de clima con ícono animado y fondo según la condición. -->
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';

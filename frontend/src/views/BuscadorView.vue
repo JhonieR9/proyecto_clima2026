@@ -1,5 +1,5 @@
 <!-- frontend/src/views/BuscadorView.vue -->
-<!-- Vista principal: buscador de clima con indicador de origen de datos -->
+<!-- Vista principal del buscador de clima con lista de ciudades favoritas. -->
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';

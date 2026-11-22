@@ -1,3 +1,5 @@
+// backend/backweb/src/controllers/user.controller.js
+// Controlador de usuarios: lista, actualiza y elimina cuentas de usuario.
 const UserModel = require('../models/user.model');
 const AppError = require('../utils/AppError');
 

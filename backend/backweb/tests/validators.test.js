@@ -1,6 +1,5 @@
 // backend/backweb/tests/validators.test.js
-// Pruebas de los schemas de validación (Zod): aceptan datos válidos y rechazan
-// entradas inválidas o potencialmente maliciosas.
+// Pruebas de los esquemas Zod: validan datos correctos y rechazan entradas inválidas.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { registerSchema, loginSchema } = require('../src/validators/auth.schema');

@@ -1,5 +1,5 @@
 // backend/backweb/src/models/favorite.model.js
-// Repositorio de ciudades favoritas por usuario.
+// Repositorio de ciudades favoritas: guarda, lista y elimina por usuario.
 const pool = require('../config/db');
 
 const FavoriteModel = {

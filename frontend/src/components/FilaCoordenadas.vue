@@ -1,5 +1,5 @@
-<!-- frontend/src/components/GeoRow.vue -->
-<!-- Componente reutilizable: muestra las coordenadas geográficas en chips -->
+<!-- frontend/src/components/FilaCoordenadas.vue -->
+<!-- Muestra latitud, longitud y humedad de la ciudad consultada en chips. -->
 <script setup lang="ts">
 defineProps<{
   latitude: number;

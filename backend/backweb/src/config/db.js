@@ -1,3 +1,5 @@
+// backend/backweb/src/config/db.js
+// Crea y exporta el pool de conexiones a PostgreSQL.
 const { Pool } = require('pg');
 require('dotenv').config();
 

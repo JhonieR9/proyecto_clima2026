@@ -1,5 +1,5 @@
-<!-- frontend/src/layouts/DefaultLayout.vue -->
-<!-- Layout principal: envuelve todas las vistas con navbar y footer -->
+<!-- frontend/src/layouts/ClimaLayout.vue -->
+<!-- Layout principal: envuelve todas las vistas con barra de navegación y pie de página. -->
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.store';

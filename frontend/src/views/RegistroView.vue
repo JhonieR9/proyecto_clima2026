@@ -1,5 +1,5 @@
 <!-- frontend/src/views/RegistroView.vue -->
-<!-- Registro de usuario. Tras crear la cuenta, redirige al login. -->
+<!-- Muestra el formulario de registro y redirige al login tras crear la cuenta. -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
@@ -69,9 +69,9 @@ const handleSubmit = async () => {
           v-model="form.password"
           type="password"
           required
-          minlength="8"
+          minlength="12"
           autocomplete="new-password"
-          placeholder="Mínimo 8 caracteres"
+          placeholder="Mínimo 12 caracteres"
           class="field-input"
         />
       </label>

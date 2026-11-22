@@ -1,4 +1,5 @@
 // frontend/src/stores/weather.store.ts
+// Gestiona el estado de la última consulta de clima y los errores asociados.
 import { defineStore } from 'pinia';
 import { AxiosError } from 'axios';
 import {

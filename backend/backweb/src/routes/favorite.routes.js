@@ -1,4 +1,5 @@
 // backend/backweb/src/routes/favorite.routes.js
+// Define las rutas de ciudades favoritas; todas requieren sesión activa.
 const { Router } = require('express');
 const FavoriteController = require('../controllers/favorite.controller');
 const validate = require('../middlewares/validate.middleware');

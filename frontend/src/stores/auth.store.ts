@@ -1,7 +1,5 @@
 // frontend/src/stores/auth.store.ts
-// Store de AUTENTICACIÓN. CORE: "Access Token EN MEMORIA y Refresh Token
-// rotativo en cookie HttpOnly". El accessToken vive solo aquí (state de Pinia),
-// nunca en localStorage/sessionStorage, para mitigar robo por XSS.
+// Almacena el token de acceso en memoria y el estado del usuario autenticado.
 import { defineStore } from 'pinia';
 import { AuthService, type AuthUser } from '../services/auth.service';
 

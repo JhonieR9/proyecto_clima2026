@@ -1,4 +1,5 @@
 // backend/backweb/src/routes/auth.routes.js
+// Define las rutas de autenticación: registro, login, refresh y logout.
 const { Router } = require('express');
 const AuthController = require('../controllers/auth.controller');
 const validate = require('../middlewares/validate.middleware');

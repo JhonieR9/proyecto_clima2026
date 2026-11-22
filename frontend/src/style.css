@@ -1,6 +1,5 @@
 /* frontend/src/style.css
-   Estilos globales base de la app. Se eliminó la plantilla demo de Vite
-   (hero, next-steps, #app con ancho fijo, etc.) que dejaba franjas blancas. */
+   Estilos globales base de la aplicación. */
 
 :root {
   --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;

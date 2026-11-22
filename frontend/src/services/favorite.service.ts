@@ -1,6 +1,5 @@
 // frontend/src/services/favorite.service.ts
-// Servicio de ciudades favoritas (requiere sesión; usa la instancia http con
-// el Bearer token y el manejo de 401/refresh ya integrado).
+// Llama al backend para listar, agregar y eliminar ciudades favoritas del usuario.
 import { http } from './http';
 
 export interface Favorite {

@@ -1,5 +1,5 @@
 // backend/backweb/src/middlewares/rateLimit.middleware.js
-// Rate limiting. CORE: "rate limiting". Protege contra abuso y fuerza bruta.
+// Limita la cantidad de peticiones por IP para evitar abuso y fuerza bruta.
 const rateLimit = require('express-rate-limit');
 
 const windowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000; // 15 min

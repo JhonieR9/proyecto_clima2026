@@ -1,5 +1,5 @@
-<!-- frontend/src/views/NotFoundView.vue -->
-<!-- Vista 404: página no encontrada -->
+<!-- frontend/src/views/PaginaNoEncontradaView.vue -->
+<!-- Muestra la página de error 404 cuando la ruta solicitada no existe. -->
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 

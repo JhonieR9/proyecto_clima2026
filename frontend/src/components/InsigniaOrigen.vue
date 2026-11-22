@@ -1,6 +1,5 @@
-<!-- frontend/src/components/SourceBadge.vue -->
-<!-- Componente reutilizable: indicador visual del origen del dato (caché PostgreSQL vs API externa) -->
-<!-- Este es el componente académico central del proyecto — demuestra el sistema de caching -->
+<!-- frontend/src/components/InsigniaOrigen.vue -->
+<!-- Muestra de dónde viene el dato del clima: caché, API externa o dato antiguo. -->
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { WeatherSource } from '../services/weather.service';

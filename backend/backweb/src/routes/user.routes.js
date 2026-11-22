@@ -1,5 +1,6 @@
+// backend/backweb/src/routes/user.routes.js
+// Define las rutas de gestión de usuarios con control de acceso por rol.
 const { Router } = require('express');
-const UserController = require('../controllers/user.controller');
 const {
   authenticate,
   authorize,
