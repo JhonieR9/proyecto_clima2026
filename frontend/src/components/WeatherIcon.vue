@@ -1,5 +1,6 @@
 <!-- frontend/src/components/WeatherIcon.vue -->
 <!-- Muestra un ícono SVG animado según el tipo de condición climática. -->
+<!-- Conectado con: weatherTheme.ts, ResultadoClimaView.vue -->
 <script setup lang="ts">
 import type { WeatherKind } from '../utils/weatherTheme';
 

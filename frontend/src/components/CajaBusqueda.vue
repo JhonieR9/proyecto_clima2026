@@ -1,5 +1,6 @@
 <!-- frontend/src/components/CajaBusqueda.vue -->
 <!-- Campo de búsqueda con autocompletado de ciudades al escribir tres letras. -->
+<!-- Conectado con: weather.service.ts, BuscadorView.vue -->
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from 'vue';
 import { WeatherService, type CitySuggestion } from '../services/weather.service';

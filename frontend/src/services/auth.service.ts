@@ -1,5 +1,6 @@
 // frontend/src/services/auth.service.ts
 // Llama al backend para registrar, iniciar sesión y cerrar sesión de usuarios.
+// Conectado con: http.ts, auth.store.ts
 import { AxiosError } from 'axios';
 import { http } from './http';
 

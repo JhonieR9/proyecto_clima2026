@@ -1,5 +1,6 @@
 // backend/backweb/src/validators/favorite.schema.js
 // Esquema Zod para validar el cuerpo al agregar una ciudad favorita.
+// Conectado con: favorite.routes.js, favorite.schema.test.js
 const { z } = require('zod');
 
 const addFavoriteSchema = z.object({

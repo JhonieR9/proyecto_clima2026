@@ -1,5 +1,6 @@
 // backend/backweb/src/utils/taskQueue.js
 // Cola en memoria con concurrencia limitada, deduplicación y reintentos automáticos.
+// Conectado con: logger.js, weather.service.js
 //
 // Es una alternativa en memoria (sin dependencias) a una cola tipo Redis/Bull.
 // Para producción multi-instancia se sustituiría por Redis, pero la interfaz

@@ -1,5 +1,6 @@
 // frontend/src/stores/weather.store.ts
 // Gestiona el estado de la última consulta de clima y los errores asociados.
+// Conectado con: weather.service.ts, BuscadorView.vue, ResultadoClimaView.vue, router/index.ts
 import { defineStore } from 'pinia';
 import { AxiosError } from 'axios';
 import {

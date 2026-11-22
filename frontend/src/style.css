@@ -1,5 +1,6 @@
 /* frontend/src/style.css
-   Estilos globales base de la aplicación. */
+   Estilos globales base de la aplicación.
+   Conectado con: main.ts */
 
 :root {
   --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;

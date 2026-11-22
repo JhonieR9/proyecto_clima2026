@@ -1,5 +1,6 @@
 <!-- frontend/src/views/LoginView.vue -->
 <!-- Muestra el formulario de inicio de sesión y redirige al buscador tras autenticarse. -->
+<!-- Conectado con: auth.store.ts -->
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useRouter, useRoute, RouterLink } from 'vue-router';

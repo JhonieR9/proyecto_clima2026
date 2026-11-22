@@ -1,5 +1,6 @@
 // backend/backweb/src/controllers/favorite.controller.js
 // Gestiona las peticiones de ciudades favoritas del usuario autenticado.
+// Conectado con: favorite.model.js, weather.service.js, AppError.js, favorite.routes.js
 const FavoriteModel = require('../models/favorite.model');
 const WeatherService = require('../services/weather.service');
 const AppError = require('../utils/AppError');

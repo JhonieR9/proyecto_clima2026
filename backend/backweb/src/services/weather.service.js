@@ -1,5 +1,6 @@
 // backend/backweb/src/services/weather.service.js
 // Obtiene datos de clima usando caché en memoria, caché en BD y la API externa.
+// Conectado con: weatherCache.model.js, AppError.js, logger.js, taskQueue.js, weather.controller.js, favorite.controller.js, weather.logic.test.js
 const axios = require('axios');
 const WeatherCache = require('../models/weatherCache.model');
 const AppError = require('../utils/AppError');

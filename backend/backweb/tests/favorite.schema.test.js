@@ -1,5 +1,6 @@
 // backend/backweb/tests/favorite.schema.test.js
 // Pruebas del validador para agregar ciudad favorita.
+// Conectado con: favorite.schema.js
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { addFavoriteSchema } = require('../src/validators/favorite.schema');

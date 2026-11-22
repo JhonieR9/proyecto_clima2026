@@ -1,5 +1,6 @@
 <!-- frontend/src/layouts/ClimaLayout.vue -->
 <!-- Layout principal: envuelve todas las vistas con barra de navegación y pie de página. -->
+<!-- Conectado con: auth.store.ts, App.vue -->
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.store';

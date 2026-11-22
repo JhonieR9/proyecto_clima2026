@@ -1,5 +1,6 @@
 // backend/backweb/src/utils/logger.js
 // Emite logs estructurados en JSON con soporte de ID de correlación por petición.
+// Conectado con: correlationId.middleware.js, error.middleware.js, weather.service.js, taskQueue.js, index.js
 
 /**
  * Emite una línea de log en formato JSON hacia stdout/stderr.

@@ -1,5 +1,6 @@
 // backend/backweb/src/config/swagger.js
 // Genera y exporta la especificación OpenAPI para la documentación interactiva.
+// Conectado con: index.js
 const swaggerJsdoc = require('swagger-jsdoc');
 
 const options = {

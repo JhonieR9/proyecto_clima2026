@@ -1,5 +1,6 @@
 // backend/backweb/src/utils/AppError.js
 // Clase de error tipado con código HTTP y código semántico para respuestas uniformes.
+// Conectado con: auth.middleware.js, error.middleware.js, validate.middleware.js, auth.service.js, weather.service.js, user.controller.js, favorite.controller.js
 
 class AppError extends Error {
   /**

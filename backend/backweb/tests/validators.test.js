@@ -1,5 +1,6 @@
 // backend/backweb/tests/validators.test.js
 // Pruebas de los esquemas Zod: validan datos correctos y rechazan entradas inválidas.
+// Conectado con: auth.schema.js, weather.schema.js
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { registerSchema, loginSchema } = require('../src/validators/auth.schema');

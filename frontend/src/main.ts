@@ -1,5 +1,6 @@
 // frontend/src/main.ts
 // Inicializa la app Vue con Pinia, el router y la configuración de autenticación.
+// Conectado con: App.vue, router/index.ts, style.css, http.ts, auth.store.ts
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';

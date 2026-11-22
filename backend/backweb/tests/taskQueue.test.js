@@ -1,5 +1,6 @@
 // backend/backweb/tests/taskQueue.test.js
 // Pruebas de la cola de tareas: concurrencia, deduplicación y reintentos.
+// Conectado con: taskQueue.js
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const TaskQueue = require('../src/utils/taskQueue');

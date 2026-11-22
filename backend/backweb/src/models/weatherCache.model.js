@@ -1,5 +1,6 @@
 // backend/backweb/src/models/weatherCache.model.js
 // Repositorio del caché de clima almacenado en PostgreSQL (nivel L2).
+// Conectado con: db.js, weather.service.js
 const pool = require('../config/db');
 
 const WeatherCache = {

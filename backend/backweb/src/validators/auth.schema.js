@@ -1,5 +1,6 @@
 // backend/backweb/src/validators/auth.schema.js
 // Esquemas Zod para validar los datos de registro e inicio de sesión.
+// Conectado con: auth.routes.js, validators.test.js
 const { z } = require('zod');
 
 // Registro de usuario

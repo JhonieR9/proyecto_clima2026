@@ -1,5 +1,6 @@
 // backend/backweb/src/controllers/weather.controller.js
 // Recibe las peticiones de clima y delega la lógica al servicio de clima.
+// Conectado con: weather.service.js, weather.routes.js
 const WeatherService = require('../services/weather.service');
 
 const WeatherController = {

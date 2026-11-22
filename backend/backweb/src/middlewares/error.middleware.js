@@ -1,5 +1,6 @@
 // backend/backweb/src/middlewares/error.middleware.js
 // Captura y formatea todos los errores de la aplicación antes de responder.
+// Conectado con: AppError.js, logger.js, index.js
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
 

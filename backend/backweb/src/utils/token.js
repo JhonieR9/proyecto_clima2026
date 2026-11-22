@@ -1,5 +1,6 @@
 // backend/backweb/src/utils/token.js
 // Genera y verifica el access token y el refresh token JWT del sistema de sesiones.
+// Conectado con: auth.middleware.js, auth.service.js
 const jwt = require('jsonwebtoken');
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'dev_access_secret';

@@ -1,5 +1,6 @@
 // frontend/src/utils/weatherTheme.ts
 // Traduce la condición del clima a un tipo de ícono y un tema de color de fondo.
+// Conectado con: WeatherIcon.vue, ResultadoClimaView.vue
 
 export type WeatherKind =
   | 'sunny'      // despejado

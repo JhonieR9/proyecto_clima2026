@@ -1,5 +1,6 @@
 // backend/backweb/src/services/auth.service.js
 // Lógica de negocio de autenticación: registro, login y rotación de tokens.
+// Conectado con: db.js, user.model.js, refreshToken.model.js, AppError.js, token.js, auth.controller.js
 const { randomUUID } = require('crypto');
 const pool = require('../config/db');
 const UserModel = require('../models/user.model');

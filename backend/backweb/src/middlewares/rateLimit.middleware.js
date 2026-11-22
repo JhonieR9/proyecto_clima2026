@@ -1,5 +1,6 @@
 // backend/backweb/src/middlewares/rateLimit.middleware.js
 // Limita la cantidad de peticiones por IP para evitar abuso y fuerza bruta.
+// Conectado con: auth.routes.js, index.js
 const rateLimit = require('express-rate-limit');
 
 const windowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000; // 15 min
