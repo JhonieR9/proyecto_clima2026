@@ -18,7 +18,7 @@ const registerSchema = z.object({
     .max(150),
   password: z
     .string({ required_error: 'La contraseña es obligatoria' })
-    .min(12,'La contraseña debe tener al menos 12 caracteres')
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
     .max(72, 'La contraseña es demasiado larga'), // límite de bcrypt
 });
 

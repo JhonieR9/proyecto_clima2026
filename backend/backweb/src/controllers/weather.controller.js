@@ -11,8 +11,9 @@ const WeatherController = {
       const { city } = req.query;
       const result = await WeatherService.getWeather(city, req.correlationId);
 
-      // Cache-Control para que el navegador también cachee la respuesta.
-      res.set('Cache-Control', 'public, max-age=1800'); // 30 min
+      // Cache-Control alineado con FRESH_MS del servidor (15 min).
+      // Sin esto el navegador podría cachear 30 min y ocultar cambios del caché del servidor.
+      res.set('Cache-Control', 'public, max-age=900'); // 15 min
       res.status(200).json(result);
     } catch (err) {
       next(err); // lo maneja el error handler global

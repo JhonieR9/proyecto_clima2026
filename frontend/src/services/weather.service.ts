@@ -1,7 +1,7 @@
 // frontend/src/services/weather.service.ts
-// Consulta el clima y las sugerencias de ciudades al backend.
-// Conectado con: CajaBusqueda.vue, InsigniaOrigen.vue, weather.store.ts
-import axios from 'axios';
+// Consulta el clima y las sugerencias de ciudades al backend usando la instancia http.
+// Conectado con: http.ts, CajaBusqueda.vue, InsigniaOrigen.vue, weather.store.ts
+import { http } from './http';
 
 // Definimos la estructura estricta de los datos del clima según la rúbrica (Cero 'any')
 export interface WeatherData {
@@ -49,27 +49,19 @@ interface SuggestResponse {
   data: CitySuggestion[];
 }
 
-// La URL apunta al backend que corre en el puerto 3000
-const API_URL = 'http://localhost:3000/api/weather';
+// La URL base del backend
+const API_BASE = '/api/weather';
 
 export const WeatherService = {
-  /**
-   * Consulta el clima de una ciudad enviando la solicitud a nuestro Backend de Express
-   * @param city Nombre de la ciudad a buscar (ej: "Bogota", "Cali")
-   */
   async fetchWeather(city: string): Promise<WeatherApiResponse> {
-    const response = await axios.get<WeatherApiResponse>(API_URL, {
+    const response = await http.get<WeatherApiResponse>(API_BASE, {
       params: { city }
     });
     return response.data;
   },
 
-  /**
-   * Autocompletado: devuelve ciudades que coinciden con el texto parcial.
-   * @param q Texto parcial (ej. "cal")
-   */
   async suggestCities(q: string): Promise<CitySuggestion[]> {
-    const response = await axios.get<SuggestResponse>(`${API_URL}/suggest`, {
+    const response = await http.get<SuggestResponse>(`${API_BASE}/suggest`, {
       params: { q },
     });
     return response.data.data;
