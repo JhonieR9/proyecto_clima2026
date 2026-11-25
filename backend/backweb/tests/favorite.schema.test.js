@@ -1,6 +1,9 @@
 // backend/backweb/tests/favorite.schema.test.js
-// Pruebas del validador para agregar ciudad favorita.
-// Conectado con: favorite.schema.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Prueba el schema de favoritas: acepta ciudad válida con/sin coordenadas,
+//           rechaza ciudad vacía, caracteres maliciosos y latitud fuera de rango.
+// Conectado con: favorite.schema.js (el schema que prueba).
+// Rol: Cobertura del validador de favoritas. Verifica que la protección de entrada funciona.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { addFavoriteSchema } = require('../src/validators/favorite.schema');

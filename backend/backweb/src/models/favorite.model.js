@@ -1,6 +1,10 @@
 // backend/backweb/src/models/favorite.model.js
-// Repositorio de ciudades favoritas: guarda, lista y elimina por usuario.
-// Conectado con: db.js, favorite.controller.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Repositorio de favoritas en PostgreSQL. findByUser lista por usuario.
+//           add hace upsert (ON CONFLICT) para evitar duplicados por usuario+ciudad.
+//           remove borra solo si la favorita pertenece al usuario que la pide.
+// Conectado con: db.js (pool de conexiones), favorite.controller.js (lo llama).
+// Rol: Única capa con SQL de favoritas. El aislamiento por usuario está en las propias consultas.
 const pool = require('../config/db');
 
 const FavoriteModel = {

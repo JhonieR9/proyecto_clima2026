@@ -1,6 +1,10 @@
 // backend/backweb/src/middlewares/validate.middleware.js
-// Valida y sanea partes del request (body, query, params) con un esquema Zod.
-// Conectado con: AppError.js, auth.routes.js, weather.routes.js, favorite.routes.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Fábrica validate(schema, source) que valida body/query/params con Zod.
+//           Si falla responde 400 con detalle por campo. Si pasa, reemplaza el dato
+//           original por la versión saneada (correo en minúsculas, texto recortado, etc.).
+// Conectado con: AppError.js (lanza badRequest), auth.routes.js, weather.routes.js, favorite.routes.js.
+// Rol: Puerta de entrada de datos. Garantiza que ningún controlador reciba datos sucios.
 const AppError = require('../utils/AppError');
 
 /**

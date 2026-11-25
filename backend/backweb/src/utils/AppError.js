@@ -1,6 +1,11 @@
 // backend/backweb/src/utils/AppError.js
-// Clase de error tipado con código HTTP y código semántico para respuestas uniformes.
-// Conectado con: auth.middleware.js, error.middleware.js, validate.middleware.js, auth.service.js, weather.service.js, user.controller.js, favorite.controller.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Define la clase AppError con statusCode HTTP y code semántico.
+//           Atajos estáticos: badRequest(400), unauthorized(401), forbidden(403),
+//           notFound(404) y conflict(409). isOperational:true distingue errores de bugs.
+// Conectado con: auth.middleware.js, error.middleware.js, validate.middleware.js,
+//               auth.service.js, weather.service.js, user.controller.js, favorite.controller.js.
+// Rol: Sistema de errores tipados. Permite lanzar un error con código HTTP desde cualquier capa.
 
 class AppError extends Error {
   /**

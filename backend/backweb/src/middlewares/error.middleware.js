@@ -1,6 +1,10 @@
 // backend/backweb/src/middlewares/error.middleware.js
-// Captura y formatea todos los errores de la aplicación antes de responder.
-// Conectado con: AppError.js, logger.js, index.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Manejo global de errores. notFoundHandler devuelve 404 para rutas inexistentes.
+//           errorHandler convierte cualquier error en { success, error:{code,message}, correlationId }.
+//           Los errores 500 no filtran detalles internos al cliente.
+// Conectado con: AppError.js (distingue errores operacionales de bugs), logger.js, index.js.
+// Rol: Punto único de respuesta de error. Garantiza el mismo formato en todos los errores.
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
 

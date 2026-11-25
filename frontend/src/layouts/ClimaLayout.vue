@@ -1,6 +1,10 @@
 <!-- frontend/src/layouts/ClimaLayout.vue -->
-<!-- Layout principal: envuelve todas las vistas con barra de navegación y pie de página. -->
-<!-- Conectado con: auth.store.ts, App.vue -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Marco visual de toda la app. Contiene la barra de navegación con la  -->
+<!--           marca, el enlace al inicio y, cuando hay sesión, el nombre del usuario -->
+<!--           y el botón Salir que llama a auth.store.logout() y redirige al login. -->
+<!-- Conectado con: auth.store.ts (lee isAuthenticated/user y llama a logout), App.vue. -->
+<!-- Rol: Layout global. Único componente que renderiza el navbar y gestiona el cierre de sesión. -->
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.store';

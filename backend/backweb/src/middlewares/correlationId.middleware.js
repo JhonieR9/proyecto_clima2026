@@ -1,6 +1,10 @@
 // backend/backweb/src/middlewares/correlationId.middleware.js
-// Asigna un ID único a cada petición para rastrear su flujo en los logs.
-// Conectado con: logger.js, index.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Asigna un UUID a cada petición entrante (lo genera o lo lee de x-correlation-id).
+//           Lo pone en req.correlationId y en el header de respuesta.
+//           Al terminar la respuesta escribe un log con método, ruta, status y duración.
+// Conectado con: logger.js (escribe los logs de acceso), index.js (middleware global).
+// Rol: Observabilidad. Permite rastrear cualquier petición de principio a fin en los logs.
 const { randomUUID } = require('crypto');
 const logger = require('../utils/logger');
 

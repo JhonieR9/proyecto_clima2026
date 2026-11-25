@@ -1,6 +1,10 @@
 // backend/backweb/src/validators/favorite.schema.js
-// Esquema Zod para validar el cuerpo al agregar una ciudad favorita.
-// Conectado con: favorite.routes.js, favorite.schema.test.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Define el schema Zod para agregar una favorita. Ciudad: 2-100 caracteres,
+//           solo letras y signos seguros (anti-inyección). Latitud y longitud opcionales
+//           con rangos -90/90 y -180/180.
+// Conectado con: favorite.routes.js (lo usa en validate), favorite.schema.test.js.
+// Rol: Contrato de entrada para favoritas. Protege el endpoint contra datos inválidos.
 const { z } = require('zod');
 
 const addFavoriteSchema = z.object({

@@ -1,6 +1,10 @@
 // backend/backweb/src/controllers/user.controller.js
-// Controlador de usuarios: lista, actualiza y elimina cuentas de usuario.
-// Conectado con: user.model.js, AppError.js, user.routes.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Gestiona las operaciones CRUD sobre usuarios.
+//           Listar, crear y eliminar requieren rol admin.
+//           Actualizar solo permite cambiar nombre y correo, no el rol ni la contraseña.
+// Conectado con: user.model.js (consultas SQL directas), AppError.js, user.routes.js.
+// Rol: Controlador de usuarios. Sin servicio intermedio porque son operaciones simples de CRUD.
 const UserModel = require('../models/user.model');
 const AppError = require('../utils/AppError');
 

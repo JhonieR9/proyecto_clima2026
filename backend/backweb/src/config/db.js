@@ -1,6 +1,12 @@
 // backend/backweb/src/config/db.js
-// Crea y exporta el pool de conexiones a PostgreSQL.
-// Conectado con: migrate.js, seedAdmin.js, user.model.js, refreshToken.model.js, weatherCache.model.js, favorite.model.js, auth.service.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Crea y exporta el pool de conexiones a PostgreSQL usando la librería pg.
+//           Lee las credenciales de DB_HOST, DB_PORT, DB_NAME, DB_USER y DB_PASSWORD.
+//           Añade withTransaction(fn): ejecuta operaciones en una transacción ACID
+//           con BEGIN/COMMIT automático y ROLLBACK si algo falla.
+// Conectado con: migrate.js, seedAdmin.js, user.model.js, refreshToken.model.js,
+//               weatherCache.model.js, favorite.model.js, auth.service.js.
+// Rol: Único punto de acceso a la base de datos. Todos los modelos lo importan.
 const { Pool } = require('pg');
 require('dotenv').config();
 

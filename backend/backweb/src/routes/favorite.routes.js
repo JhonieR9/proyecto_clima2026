@@ -1,6 +1,11 @@
 // backend/backweb/src/routes/favorite.routes.js
-// Define las rutas de ciudades favoritas; todas requieren sesión activa.
-// Conectado con: favorite.controller.js, validate.middleware.js, auth.middleware.js, favorite.schema.js, index.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Define las tres rutas de favoritas: listar, agregar y eliminar.
+//           Aplica authenticate a todo el router con router.use, así todas exigen sesión.
+//           La ruta de agregar además valida el cuerpo con addFavoriteSchema.
+// Conectado con: favorite.controller.js, validate.middleware.js, auth.middleware.js,
+//               favorite.schema.js, index.js.
+// Rol: Enrutador de favoritas. Ninguna operación sobre favoritas puede hacerse sin sesión.
 const { Router } = require('express');
 const FavoriteController = require('../controllers/favorite.controller');
 const validate = require('../middlewares/validate.middleware');

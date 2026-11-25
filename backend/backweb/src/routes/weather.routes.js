@@ -1,6 +1,10 @@
 // backend/backweb/src/routes/weather.routes.js
-// Define las rutas de consulta y sugerencia de ciudades para el clima.
-// Conectado con: weather.controller.js, validate.middleware.js, weather.schema.js, index.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Define las dos rutas del clima: consulta por ciudad y autocompletado.
+//           /suggest está declarada antes que / para que Express no la confunda con una ciudad.
+//           Ambas pasan por validate con sus respectivos schemas Zod anti-inyección.
+// Conectado con: weather.controller.js, validate.middleware.js, weather.schema.js, index.js.
+// Rol: Enrutador del clima. Conecta las rutas públicas del clima con sus guardias de validación.
 const express = require('express');
 const router = express.Router();
 const WeatherController = require('../controllers/weather.controller');

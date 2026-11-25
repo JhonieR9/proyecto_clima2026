@@ -1,6 +1,12 @@
 // backend/backweb/src/index.js
-// Arranca el servidor Express y registra middlewares, rutas y migraciones.
-// Conectado con: swagger.js, migrate.js, logger.js, correlationId.middleware.js, rateLimit.middleware.js, error.middleware.js, auth.routes.js, user.routes.js, weather.routes.js, favorite.routes.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Punto de entrada del servidor. Crea la app Express, registra los middlewares
+//           globales (helmet, cors, json, cookieParser, correlationId, apiLimiter),
+//           monta las cuatro rutas, expone /health y /api-docs, corre migraciones y levanta el servidor.
+// Conectado con: swagger.js, migrate.js, logger.js, correlationId.middleware.js,
+//               rateLimit.middleware.js, error.middleware.js, auth.routes.js,
+//               user.routes.js, weather.routes.js, favorite.routes.js, db.js, weather.service.js.
+// Rol: Archivo principal del backend. Ensambla todas las piezas y es el único que arranca el servidor.
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');

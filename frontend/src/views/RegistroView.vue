@@ -1,6 +1,10 @@
 <!-- frontend/src/views/RegistroView.vue -->
-<!-- Muestra el formulario de registro y redirige al login tras crear la cuenta. -->
-<!-- Conectado con: auth.store.ts -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Pantalla de registro con formulario de nombre, correo y contraseña   -->
+<!--           (mínimo 8 caracteres). Llama a auth.store.register. Si tiene éxito   -->
+<!--           muestra confirmación animada y redirige al login tras 900 ms.         -->
+<!-- Conectado con: auth.store.ts (register, loading, error).                        -->
+<!-- Rol: Único punto de registro público. Siempre crea usuarios con rol user. -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';

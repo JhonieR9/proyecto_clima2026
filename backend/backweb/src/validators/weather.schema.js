@@ -1,6 +1,10 @@
 // backend/backweb/src/validators/weather.schema.js
-// Esquemas Zod para validar los parámetros de búsqueda y sugerencia de clima.
-// Conectado con: weather.routes.js, validators.test.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Define dos schemas Zod. weatherQuerySchema valida city (mín 2, anti-inyección).
+//           suggestQuerySchema es igual pero desde 1 carácter para el autocompletado.
+//           Ambos rechazan caracteres que podrían usarse para inyección SQL o XSS.
+// Conectado con: weather.routes.js (los usa en validate), validators.test.js.
+// Rol: Primera línea de defensa contra datos maliciosos en los parámetros de búsqueda.
 const { z } = require('zod');
 
 const weatherQuerySchema = z.object({

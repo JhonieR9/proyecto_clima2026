@@ -1,6 +1,10 @@
 // frontend/src/services/auth.service.ts
-// Llama al backend para registrar, iniciar sesión y cerrar sesión de usuarios.
-// Conectado con: http.ts, auth.store.ts
+// ─────────────────────────────────────────────────────────
+// Qué hace: Servicio de autenticación tipado. Llama a /register, /login, /refresh,
+//           /logout y /me usando la instancia http. Desenvuelve el sobre {success,data}
+//           del backend. extractError normaliza el error a un string legible para la UI.
+// Conectado con: http.ts (instancia Axios con interceptores), auth.store.ts.
+// Rol: Capa de comunicación con la API de autenticación. Separa HTTP del estado (store).
 import { AxiosError } from 'axios';
 import { http } from './http';
 

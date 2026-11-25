@@ -1,6 +1,10 @@
 // backend/backweb/src/models/weatherCache.model.js
-// Repositorio del caché de clima almacenado en PostgreSQL (nivel L2).
-// Conectado con: db.js, weather.service.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Repositorio del caché de clima en PostgreSQL (L2). findByKey busca por la
+//           clave normalizada city_key sin filtrar por antigüedad (el servicio decide).
+//           upsertWeather inserta o actualiza con ON CONFLICT para mantener un registro por ciudad.
+// Conectado con: db.js (pool de conexiones), weather.service.js (lee y escribe el caché L2).
+// Rol: Caché de segundo nivel. Persiste los datos del clima entre reinicios del servidor.
 const pool = require('../config/db');
 
 const WeatherCache = {

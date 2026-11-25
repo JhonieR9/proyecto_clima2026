@@ -1,6 +1,10 @@
 // backend/backweb/src/models/refreshToken.model.js
-// Repositorio de refresh tokens: guarda, busca y revoca tokens de sesión.
-// Conectado con: db.js, auth.service.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Repositorio de refresh tokens. Guarda, busca por jti, revoca un token individual
+//           y revoca todos los de un usuario. Acepta un executor opcional para participar en
+//           transacciones ACID. La columna revoked permite invalidar sesiones sin borrarlas.
+// Conectado con: db.js (pool de conexiones), auth.service.js (login, refresh y logout).
+// Rol: Persistencia de la rotación de tokens. Detecta el reuso de tokens robados.
 const pool = require('../config/db');
 
 // Cada metodo acepta un `executor` opcional (cliente de transaccion). Si no se

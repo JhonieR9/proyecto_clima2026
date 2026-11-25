@@ -1,6 +1,10 @@
 // frontend/src/utils/weatherTheme.ts
-// Traduce la condición del clima a un tipo de ícono y un tema de color de fondo.
-// Conectado con: WeatherIcon.vue, ResultadoClimaView.vue
+// ─────────────────────────────────────────────────────────
+// Qué hace: Convierte el texto de la condición en un tema visual. kindFromCondition
+//           mapea palabras clave en español a un WeatherKind (storm, snow, rain, fog,
+//           cloudy, sunny). themeFromCondition devuelve el tipo y el degradado CSS.
+// Conectado con: WeatherIcon.vue (recibe el kind), ResultadoClimaView.vue (aplica el gradiente).
+// Rol: Capa de tema dinámico. Separa la lógica clima->diseño de los componentes visuales.
 
 export type WeatherKind =
   | 'sunny'      // despejado

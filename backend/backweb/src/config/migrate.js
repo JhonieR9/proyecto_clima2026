@@ -1,6 +1,10 @@
 // backend/backweb/src/config/migrate.js
-// Ejecuta las migraciones de base de datos al arrancar el servidor.
-// Conectado con: db.js, index.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Ejecuta migraciones idempotentes al arrancar el servidor.
+//           Crea las tablas users, refresh_tokens, weather_cache y favorites si no existen,
+//           añade columnas que falten y crea índices únicos. Se puede ejecutar varias veces.
+// Conectado con: db.js (pool de conexiones), index.js (lo llama antes de levantar el servidor).
+// Rol: Gestor del esquema de la base de datos. Elimina la necesidad de crear tablas a mano.
 const pool = require('./db');
 
 // Agrega columnas aquí para que se creen automáticamente al arrancar

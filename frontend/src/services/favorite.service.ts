@@ -1,6 +1,10 @@
 // frontend/src/services/favorite.service.ts
-// Llama al backend para listar, agregar y eliminar ciudades favoritas del usuario.
-// Conectado con: http.ts, favorite.store.ts
+// ─────────────────────────────────────────────────────────
+// Qué hace: Servicio de favoritas tipado. Llama a GET, POST y DELETE de /api/favorites
+//           usando la instancia http. El token Bearer se añade automáticamente
+//           por el interceptor de http.ts.
+// Conectado con: http.ts (instancia Axios con interceptores y token), favorite.store.ts.
+// Rol: Comunicación con la API de favoritas. Se beneficia de reintentos y renovado de token.
 import { http } from './http';
 
 export interface Favorite {

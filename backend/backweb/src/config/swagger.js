@@ -1,6 +1,10 @@
 // backend/backweb/src/config/swagger.js
-// Genera y exporta la especificación OpenAPI para la documentación interactiva.
-// Conectado con: index.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Configura Swagger (OpenAPI 3.0) leyendo los comentarios @swagger
+//           de los archivos de rutas. Define título, versión, URL y esquema Bearer.
+//           Exporta swaggerSpec que se monta en /api-docs.
+// Conectado con: index.js (monta la UI de Swagger), routes/*.js (los @swagger se leen aquí).
+// Rol: Genera la documentación interactiva de la API automáticamente desde el código.
 const swaggerJsdoc = require('swagger-jsdoc');
 
 const options = {

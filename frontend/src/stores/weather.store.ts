@@ -1,6 +1,10 @@
 // frontend/src/stores/weather.store.ts
-// Gestiona el estado de la última consulta de clima y los errores asociados.
-// Conectado con: weather.service.ts, BuscadorView.vue, ResultadoClimaView.vue, router/index.ts
+// ─────────────────────────────────────────────────────────
+// Qué hace: Store del clima (Pinia). Guarda el último clima consultado, el estado de carga,
+//           el error y el sourceInfo (de dónde vino el dato). extractError convierte
+//           el error del backend en texto sin usar any.
+// Conectado con: weather.service.ts, BuscadorView.vue, ResultadoClimaView.vue, router/index.ts.
+// Rol: Puente entre la búsqueda del usuario y la tarjeta de resultado.
 import { defineStore } from 'pinia';
 import { AxiosError } from 'axios';
 import {

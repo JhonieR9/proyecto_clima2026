@@ -1,6 +1,11 @@
 // backend/backweb/src/services/auth.service.js
-// Lógica de negocio de autenticación: registro, login y rotación de tokens.
-// Conectado con: db.js, user.model.js, refreshToken.model.js, AppError.js, token.js, auth.controller.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Contiene toda la lógica de negocio de autenticación. register verifica correo único.
+//           login compara con bcrypt usando el mismo mensaje para email/password (anti-enumeración).
+//           refresh hace rotación atómica (BEGIN/COMMIT) y detecta reuso de tokens revocando sesiones.
+// Conectado con: db.js (withTransaction), user.model.js, refreshToken.model.js,
+//               AppError.js, token.js, auth.controller.js.
+// Rol: Servicio de autenticación. Única capa con reglas de negocio de sesión.
 const { randomUUID } = require('crypto');
 const pool = require('../config/db');
 const UserModel = require('../models/user.model');

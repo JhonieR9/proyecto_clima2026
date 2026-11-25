@@ -1,6 +1,9 @@
 // backend/backweb/tests/validators.test.js
-// Pruebas de los esquemas Zod: validan datos correctos y rechazan entradas inválidas.
-// Conectado con: auth.schema.js, weather.schema.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Prueba los schemas de autenticación y clima: acepta datos válidos, normaliza el
+//           correo, rechaza correos inválidos, contraseñas cortas e inyecciones SQL.
+// Conectado con: auth.schema.js, weather.schema.js.
+// Rol: Cobertura de los validadores de auth y clima. Los schemas más importantes para seguridad.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { registerSchema, loginSchema } = require('../src/validators/auth.schema');

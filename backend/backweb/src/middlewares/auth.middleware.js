@@ -1,6 +1,10 @@
 // backend/backweb/src/middlewares/auth.middleware.js
-// Verifica el token de acceso y controla los permisos por rol en cada ruta.
-// Conectado con: AppError.js, token.js, auth.routes.js, user.routes.js, favorite.routes.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Exporta tres guardias. authenticate verifica el Bearer token y deja req.user.
+//           authorize(...roles) implementa RBAC: solo permite ciertos roles (ej: admin).
+//           authorizeSelfOrAdmin implementa ABAC: dueño del recurso o admin.
+// Conectado con: AppError.js, token.js, auth.routes.js, user.routes.js, favorite.routes.js.
+// Rol: Capa de seguridad de acceso. Es el guardián de todas las rutas protegidas del proyecto.
 const AppError = require('../utils/AppError');
 const { verifyAccessToken } = require('../utils/token');
 
