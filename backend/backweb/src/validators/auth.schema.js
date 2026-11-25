@@ -1,6 +1,10 @@
 // backend/backweb/src/validators/auth.schema.js
-// Esquemas Zod para validar los datos de registro e inicio de sesión.
-// Conectado con: auth.routes.js, validators.test.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Define los schemas Zod para registro y login. registerSchema exige nombre (mín 2),
+//           correo válido (normaliza a minúsculas) y contraseña de 8 a 72 caracteres.
+//           loginSchema solo exige correo válido y contraseña no vacía.
+// Conectado con: auth.routes.js (lo usa en validate), validators.test.js (prueba sus reglas).
+// Rol: Contrato de entrada para autenticación. Ningún dato inválido llega al servicio.
 const { z } = require('zod');
 
 // Registro de usuario

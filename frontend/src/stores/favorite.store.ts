@@ -1,6 +1,11 @@
 // frontend/src/stores/favorite.store.ts
-// Gestiona el estado de las ciudades favoritas del usuario en la aplicación.
-// Conectado con: favorite.service.ts, BuscadorView.vue, ResultadoClimaView.vue
+// ─────────────────────────────────────────────────────────
+// Qué hace: Store de favoritas (Pinia). Mantiene la lista del usuario actual.
+//           isFavorite(city) permite saber si una ciudad ya está marcada.
+//           clear() se llama al cerrar sesión para evitar que las favoritas de un usuario
+//           aparezcan al siguiente.
+// Conectado con: favorite.service.ts, BuscadorView.vue, ResultadoClimaView.vue.
+// Rol: Estado de las favoritas del usuario actual. Separa persistencia de presentación.
 import { defineStore } from 'pinia';
 import { FavoriteService, type Favorite } from '../services/favorite.service';
 

@@ -1,6 +1,10 @@
 // backend/backweb/src/controllers/auth.controller.js
-// Recibe las peticiones de autenticación y gestiona la cookie del refresh token.
-// Conectado con: auth.service.js, auth.routes.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Traduce las peticiones HTTP de autenticación al servicio correspondiente.
+//           Gestiona la cookie segura del refresh token (HttpOnly, SameSite=Strict, Secure).
+//           El access token lo devuelve solo en el cuerpo de la respuesta.
+// Conectado con: auth.service.js (delega la lógica de negocio), auth.routes.js (lo registra).
+// Rol: Controlador HTTP de auth. No tiene lógica de negocio; solo traduce y responde.
 const AuthService = require('../services/auth.service');
 
 const REFRESH_COOKIE = 'refreshToken';

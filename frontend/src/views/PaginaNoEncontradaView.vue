@@ -1,6 +1,9 @@
 <!-- frontend/src/views/PaginaNoEncontradaView.vue -->
-<!-- Muestra la página de error 404 cuando la ruta solicitada no existe. -->
-<!-- Conectado con: router/index.ts -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Pantalla 404. Muestra ícono de niebla, el código 404 y un mensaje.   -->
+<!--           El botón Volver al inicio usa el router para navegar sin recargar.    -->
+<!-- Conectado con: router/index.ts (la registra como ruta catch-all para URLs desconocidas). -->
+<!-- Rol: Evita que el usuario vea una pantalla en blanco ante una URL inexistente. -->
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 

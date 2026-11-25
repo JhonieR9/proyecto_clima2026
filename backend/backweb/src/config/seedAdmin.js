@@ -1,6 +1,10 @@
 // backend/backweb/src/config/seedAdmin.js
-// Crea o asciende a administrador un usuario inicial para controlar el acceso por rol.
-// Conectado con: db.js, migrate.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Script de un solo uso que crea el usuario administrador inicial.
+//           Si el correo ya existe lo asciende a admin. Ejecutar con npm run seed:admin.
+//           Credenciales por defecto: admin@clima.com / Admin12345 (configurables por env).
+// Conectado con: db.js (consulta y actualiza users), migrate.js (asegura que las tablas existan).
+// Rol: Resuelve el arranque: sin este script no hay forma de tener un admin para demostrar RBAC.
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const pool = require('./db');

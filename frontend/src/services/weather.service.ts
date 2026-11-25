@@ -1,6 +1,11 @@
 // frontend/src/services/weather.service.ts
-// Consulta el clima y las sugerencias de ciudades al backend usando la instancia http.
-// Conectado con: http.ts, CajaBusqueda.vue, InsigniaOrigen.vue, weather.store.ts
+// ─────────────────────────────────────────────────────────
+// Qué hace: Servicio de clima tipado. Consulta el clima y el autocompletado usando http
+//           (que envía el token y tiene reintentos). Define los tipos WeatherData,
+//           WeatherSource y CitySuggestion que toda la aplicación usa.
+// Conectado con: http.ts, CajaBusqueda.vue (suggestCities), InsigniaOrigen.vue (WeatherSource),
+//               weather.store.ts (fetchWeather).
+// Rol: Comunicación con la API del clima y fuente de tipos del dominio meteorológico.
 import { http } from './http';
 
 // Definimos la estructura estricta de los datos del clima según la rúbrica (Cero 'any')

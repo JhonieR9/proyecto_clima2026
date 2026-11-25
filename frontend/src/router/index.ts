@@ -1,6 +1,10 @@
 // frontend/src/router/index.ts
-// Configura las rutas de la aplicación con guardias de autenticación.
-// Conectado con: weather.store.ts, auth.store.ts
+// ─────────────────────────────────────────────────────────
+// Qué hace: Define las rutas y el control de acceso. /login y /register son solo para
+//           invitados. / y /result requieren sesión. /result además exige datos en el store.
+//           El guard global es asíncrono e intenta recuperar la sesión antes de decidir.
+// Conectado con: weather.store.ts (guard de /result), auth.store.ts (guard global), main.ts.
+// Rol: Control de acceso del frontend. Solo protege la interfaz; los datos los protege el backend.
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import { useWeatherStore } from '../stores/weather.store';

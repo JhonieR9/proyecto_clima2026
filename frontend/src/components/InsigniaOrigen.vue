@@ -1,6 +1,10 @@
 <!-- frontend/src/components/InsigniaOrigen.vue -->
-<!-- Muestra de dónde viene el dato del clima: caché, API externa o dato antiguo. -->
-<!-- Conectado con: weather.service.ts, ResultadoClimaView.vue -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Muestra el origen del dato del clima con un aviso visual coloreado.  -->
+<!--           Agrupa los 5 valores de source en 3 estados: caché (memory/cache),   -->
+<!--           API fresca (api_fresh) y dato antiguo revalidando (stale/stale_fallback). -->
+<!-- Conectado con: weather.service.ts (tipo WeatherSource), ResultadoClimaView.vue. -->
+<!-- Rol: Componente académico central. Demuestra en tiempo real el sistema de caché multinivel. -->
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { WeatherSource } from '../services/weather.service';

@@ -1,6 +1,10 @@
 // frontend/src/main.ts
-// Inicializa la app Vue con Pinia, el router y la configuración de autenticación.
-// Conectado con: App.vue, router/index.ts, style.css, http.ts, auth.store.ts
+// ─────────────────────────────────────────────────────────
+// Qué hace: Archivo de arranque del frontend. Crea la app Vue, instala Pinia y el router.
+//           Conecta el interceptor de Axios con el store de auth (configureHttpAuth)
+//           para evitar la dependencia circular. Recupera la sesión antes de montar.
+// Conectado con: App.vue, router/index.ts, style.css, http.ts (configureHttpAuth), auth.store.ts.
+// Rol: Punto de entrada del frontend. Ensambla todas las piezas y monta la app en el DOM.
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';

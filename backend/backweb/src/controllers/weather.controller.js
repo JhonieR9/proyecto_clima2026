@@ -1,6 +1,10 @@
 // backend/backweb/src/controllers/weather.controller.js
-// Recibe las peticiones de clima y delega la lógica al servicio de clima.
-// Conectado con: weather.service.js, weather.routes.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Recibe las peticiones de clima y autocompletado y las delega al servicio.
+//           Añade Cache-Control de 15 min al clima (alineado con FRESH_MS del servidor)
+//           y de 5 min al autocompletado para que el navegador también cachee.
+// Conectado con: weather.service.js (delega la lógica de caché y Open-Meteo), weather.routes.js.
+// Rol: Único archivo que toca las cabeceras HTTP del clima.
 const WeatherService = require('../services/weather.service');
 
 const WeatherController = {

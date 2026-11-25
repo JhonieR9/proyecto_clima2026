@@ -1,6 +1,11 @@
 // backend/backweb/src/utils/token.js
-// Genera y verifica el access token y el refresh token JWT del sistema de sesiones.
-// Conectado con: auth.middleware.js, auth.service.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Firma y verifica los dos JWT del sistema de doble token.
+//           signAccessToken: vida corta (15 min). signRefreshToken: vida larga (7 días) con jti.
+//           Usa secretos distintos para cada tipo, configurables por variables de entorno.
+// Conectado con: auth.middleware.js (verifica el access token en cada petición),
+//               auth.service.js (firma los tokens en login y refresh).
+// Rol: Capa criptográfica de tokens. Único lugar que conoce los secretos JWT.
 const jwt = require('jsonwebtoken');
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'dev_access_secret';

@@ -1,6 +1,10 @@
 <!-- frontend/src/components/FilaCoordenadas.vue -->
-<!-- Muestra latitud, longitud y humedad de la ciudad consultada en chips. -->
-<!-- Conectado con: ResultadoClimaView.vue -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Muestra latitud, longitud y humedad como chips visuales translúcidos. -->
+<!--           La humedad es opcional: solo aparece si el prop llega con valor.       -->
+<!--           Los colores se integran con el fondo glass de la tarjeta de clima.     -->
+<!-- Conectado con: ResultadoClimaView.vue (lo instancia con los datos del clima).    -->
+<!-- Rol: Componente de presentación de datos geográficos y meteorológicos secundarios. -->
 <script setup lang="ts">
 defineProps<{
   latitude: number;

@@ -1,6 +1,10 @@
 <!-- frontend/src/components/CajaBusqueda.vue -->
-<!-- Campo de búsqueda con autocompletado de ciudades al escribir tres letras. -->
-<!-- Conectado con: weather.service.ts, BuscadorView.vue -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Campo de búsqueda con autocompletado. Espera 300 ms (debounce) y desde  -->
+<!--           3 letras pide sugerencias al backend con priorización de Colombia.      -->
+<!--           Desplegable navegable con teclado (flechas, Enter, Escape).             -->
+<!-- Conectado con: weather.service.ts (suggestCities), BuscadorView.vue (evento search). -->
+<!-- Rol: Encapsula toda la lógica del autocompletado para que BuscadorView solo reaccione al resultado. -->
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from 'vue';
 import { WeatherService, type CitySuggestion } from '../services/weather.service';

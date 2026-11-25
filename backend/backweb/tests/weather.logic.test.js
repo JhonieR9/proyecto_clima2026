@@ -1,6 +1,9 @@
 // backend/backweb/tests/weather.logic.test.js
-// Pruebas de las funciones puras del servicio de clima: normalización y sugerencias.
-// Conectado con: weather.service.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Prueba cityKeyOf (quita acentos, minúsculas, recorta espacios) y orderSuggestions
+//           (Colombia primero, reconoce código MX, preserva el orden interno).
+// Conectado con: weather.service.js (las funciones que prueba).
+// Rol: Verifica que Bogota y Bogotá sean la misma clave de caché. La corrección más importante.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { cityKeyOf, orderSuggestions } = require('../src/services/weather.service');

@@ -1,6 +1,12 @@
-/* frontend/src/style.css
-   Estilos globales base de la aplicación.
-   Conectado con: main.ts */
+/*
+ * frontend/src/style.css
+ * ─────────────────────────────────────────────────────────
+ * Qué hace: Estilos globales base de la aplicación. Define las fuentes (Inter para texto,
+ *           Poppins para títulos), el reset de body/html y el fondo azul de respaldo
+ *           para que nunca se vea blanco detrás de los componentes.
+ * Conectado con: main.ts (lo importa una vez al arrancar la aplicación).
+ * Rol: Base visual global. Sin este archivo podrían aparecer franjas blancas entre componentes.
+ */
 
 :root {
   --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;

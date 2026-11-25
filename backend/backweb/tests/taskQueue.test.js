@@ -1,6 +1,9 @@
 // backend/backweb/tests/taskQueue.test.js
-// Pruebas de la cola de tareas: concurrencia, deduplicación y reintentos.
-// Conectado con: taskQueue.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Prueba la cola de tareas con 5 casos: que ejecute, de-duplique por clave,
+//           permita re-encolar tras completarse, respete la concurrencia y reintente ante fallos.
+// Conectado con: taskQueue.js (la clase que prueba).
+// Rol: Cobertura de la cola. Verifica las tres garantías clave: ejecución, deduplicación y reintentos.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const TaskQueue = require('../src/utils/taskQueue');

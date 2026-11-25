@@ -1,6 +1,11 @@
 // frontend/src/services/http.ts
-// Instancia central de Axios con interceptores para adjuntar token y renovar sesión.
-// Conectado con: auth.service.ts, favorite.service.ts, main.ts
+// ─────────────────────────────────────────────────────────
+// Qué hace: Instancia central de Axios (baseURL, withCredentials, timeout 10 s).
+//           Interceptor de petición: añade Bearer si hay token. Interceptor de respuesta:
+//           reintenta ante red/5xx/429 (hasta 3 veces con backoff) y renueva token ante 401.
+//           Varias peticiones que fallan a la vez comparten una sola renovación.
+// Conectado con: auth.service.ts, favorite.service.ts, weather.service.ts, main.ts.
+// Rol: Infraestructura HTTP del frontend. Centraliza auth, reintentos y renovado de token.
 import axios, {
   AxiosError,
   type AxiosInstance,

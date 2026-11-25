@@ -1,6 +1,10 @@
 <!-- frontend/src/views/BuscadorView.vue -->
-<!-- Vista principal del buscador de clima con lista de ciudades favoritas. -->
-<!-- Conectado con: weather.store.ts, favorite.store.ts, CajaBusqueda.vue -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Pantalla principal. Carga las favoritas al montar. Muestra CajaBusqueda -->
+<!--           con autocompletado y navega a /result si la búsqueda fue exitosa.     -->
+<!--           Lista las favoritas como chips clicables para consultar sin escribir.  -->
+<!-- Conectado con: weather.store.ts, favorite.store.ts, CajaBusqueda.vue.           -->
+<!-- Rol: Vista principal. Punto de acceso a todas las funciones del proyecto tras el login. -->
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';

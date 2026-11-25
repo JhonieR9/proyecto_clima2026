@@ -1,6 +1,10 @@
 <!-- frontend/src/components/WeatherIcon.vue -->
-<!-- Muestra un ícono SVG animado según el tipo de condición climática. -->
-<!-- Conectado con: weatherTheme.ts, ResultadoClimaView.vue -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Dibuja en SVG el ícono animado del clima: sol girando, nube derivando, -->
+<!--           gotas cayendo, copos de nieve, rayo parpadeante o franjas de niebla.  -->
+<!--           Respeta prefers-reduced-motion para accesibilidad.                    -->
+<!-- Conectado con: weatherTheme.ts (tipo WeatherKind), ResultadoClimaView.vue.      -->
+<!-- Rol: Convierte el texto de la condición en una experiencia visual animada. -->
 <script setup lang="ts">
 import type { WeatherKind } from '../utils/weatherTheme';
 

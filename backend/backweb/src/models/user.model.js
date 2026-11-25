@@ -1,6 +1,10 @@
 // backend/backweb/src/models/user.model.js
-// Repositorio de usuarios: consultas, creación y actualización en la base de datos.
-// Conectado con: db.js, auth.service.js, user.controller.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Repositorio de usuarios. create hashea la contraseña con bcrypt (12 rondas).
+//           findByEmail devuelve el hash para compararlo en login.
+//           Los demás métodos nunca devuelven el campo password en sus resultados.
+// Conectado con: db.js (pool de conexiones), auth.service.js (login/registro), user.controller.js.
+// Rol: Única capa que toca la contraseña. Garantiza que nunca salga en texto plano.
 const pool = require('../config/db');
 
 // Factor de coste de bcrypt. 12 es el minimo recomendado hoy; configurable por env.

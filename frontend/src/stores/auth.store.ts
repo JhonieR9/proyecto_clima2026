@@ -1,6 +1,11 @@
 // frontend/src/stores/auth.store.ts
-// Almacena el token de acceso en memoria y el estado del usuario autenticado.
-// Conectado con: auth.service.ts, ClimaLayout.vue, router/index.ts, LoginView.vue, RegistroView.vue, main.ts
+// ─────────────────────────────────────────────────────────
+// Qué hace: Store de autenticación (Pinia). Guarda el access token SOLO en memoria
+//           (nunca en localStorage, para mitigar XSS). restoreSession recupera la sesión
+//           con la cookie de refresh. clearSession vacía el estado y limpia las favoritas.
+// Conectado con: auth.service.ts, ClimaLayout.vue, router/index.ts,
+//               LoginView.vue, RegistroView.vue, main.ts.
+// Rol: Única fuente de verdad sobre si el usuario está autenticado y quién es.
 import { defineStore } from 'pinia';
 import { AuthService, type AuthUser } from '../services/auth.service';
 

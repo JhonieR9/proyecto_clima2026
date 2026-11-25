@@ -1,6 +1,11 @@
 // backend/backweb/src/utils/logger.js
-// Emite logs estructurados en JSON con soporte de ID de correlación por petición.
-// Conectado con: correlationId.middleware.js, error.middleware.js, weather.service.js, taskQueue.js, index.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Logger estructurado que escribe en formato JSON a stdout/stderr.
+//           Tres niveles: info, warn y error. Cada entrada incluye timestamp, level,
+//           message y metadatos adicionales (correlationId, ruta, duración, etc.).
+// Conectado con: correlationId.middleware.js, error.middleware.js, weather.service.js,
+//               taskQueue.js, index.js.
+// Rol: Observabilidad centralizada. Todos los eventos del servidor pasan por aquí.
 
 /**
  * Emite una línea de log en formato JSON hacia stdout/stderr.

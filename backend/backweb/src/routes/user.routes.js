@@ -1,6 +1,10 @@
 // backend/backweb/src/routes/user.routes.js
-// Define las rutas de gestión de usuarios con control de acceso por rol.
-// Conectado con: user.controller.js, auth.middleware.js, index.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Define las cinco rutas de usuarios. Aplica authenticate globalmente,
+//           authorize(admin) para listar/crear/eliminar y authorizeSelfOrAdmin para ver/editar.
+//           Demuestra RBAC (por rol) y ABAC (por propiedad del recurso) en el mismo router.
+// Conectado con: user.controller.js, auth.middleware.js, index.js.
+// Rol: Enrutador de usuarios. Donde se aplica el control de acceso más granular del proyecto.
 const { Router } = require('express');
 const {
   authenticate,

@@ -1,6 +1,10 @@
 <!-- frontend/src/views/LoginView.vue -->
-<!-- Muestra el formulario de inicio de sesión y redirige al buscador tras autenticarse. -->
-<!-- Conectado con: auth.store.ts -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Pantalla de inicio de sesión. Llama a auth.store.login y redirige a   -->
+<!--           la ruta guardada en redirect o al inicio. Los errores del backend      -->
+<!--           se muestran con animación de entrada (fade + deslizamiento).           -->
+<!-- Conectado con: auth.store.ts (login, loading, error).                            -->
+<!-- Rol: Puerta de entrada al sistema para usuarios registrados. -->
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useRouter, useRoute, RouterLink } from 'vue-router';

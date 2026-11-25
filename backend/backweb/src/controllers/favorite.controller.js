@@ -1,6 +1,10 @@
 // backend/backweb/src/controllers/favorite.controller.js
-// Gestiona las peticiones de ciudades favoritas del usuario autenticado.
-// Conectado con: favorite.model.js, weather.service.js, AppError.js, favorite.routes.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Recibe las peticiones de favoritas y las delega al modelo.
+//           Usa req.user.id (del middleware authenticate) para aislar cada usuario.
+//           Al agregar, calcula la clave normalizada con cityKeyOf para evitar duplicados.
+// Conectado con: favorite.model.js, weather.service.js (cityKeyOf), AppError.js, favorite.routes.js.
+// Rol: Controlador HTTP de favoritas. Garantiza el aislamiento entre usuarios.
 const FavoriteModel = require('../models/favorite.model');
 const WeatherService = require('../services/weather.service');
 const AppError = require('../utils/AppError');

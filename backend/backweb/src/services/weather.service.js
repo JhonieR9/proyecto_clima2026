@@ -1,6 +1,12 @@
 // backend/backweb/src/services/weather.service.js
-// Obtiene datos de clima usando caché en memoria, caché en BD y la API externa.
-// Conectado con: weatherCache.model.js, AppError.js, logger.js, taskQueue.js, weather.controller.js, favorite.controller.js, weather.logic.test.js
+// ─────────────────────────────────────────────────────────
+// Qué hace: Implementa caché multinivel (L1 memoria + L2 PostgreSQL) con Stale-While-Revalidate.
+//           Decide de dónde viene el dato: memory, cache, stale, api_fresh, stale_fallback o 503.
+//           Las revalidaciones se encolan en taskQueue. Implementa el autocompletado con
+//           priorización de Colombia.
+// Conectado con: weatherCache.model.js, AppError.js, logger.js, taskQueue.js,
+//               weather.controller.js, favorite.controller.js, weather.logic.test.js.
+// Rol: Archivo con más lógica del proyecto. El sistema de caché es el núcleo académico del trabajo.
 const axios = require('axios');
 const WeatherCache = require('../models/weatherCache.model');
 const AppError = require('../utils/AppError');

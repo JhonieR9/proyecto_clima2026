@@ -1,6 +1,12 @@
 <!-- frontend/src/views/ResultadoClimaView.vue -->
-<!-- Muestra la tarjeta de clima con ícono animado y fondo según la condición. -->
-<!-- Conectado con: weather.store.ts, favorite.store.ts, FilaCoordenadas.vue, InsigniaOrigen.vue, WeatherIcon.vue, weatherTheme.ts -->
+<!-- ─────────────────────────────────────────────────────── -->
+<!-- Qué hace: Pantalla de resultado. Usa position:fixed para que el gradiente      -->
+<!--           cubra toda la ventana. Muestra ciudad, ícono animado, temperatura,   -->
+<!--           condición, coordenadas, humedad e insignia de origen del dato.        -->
+<!--           La estrella alterna la favorita con un toque.                         -->
+<!-- Conectado con: weather.store.ts, favorite.store.ts, FilaCoordenadas.vue,       -->
+<!--               InsigniaOrigen.vue, WeatherIcon.vue, weatherTheme.ts.             -->
+<!-- Rol: Vista principal de resultado. Demuestra el caché (insignia) y el diseño dinámico. -->
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
