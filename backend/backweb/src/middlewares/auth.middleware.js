@@ -11,6 +11,11 @@ const { verifyAccessToken } = require('../utils/token');
 /**
  * authenticate: exige un Access Token válido en Authorization: Bearer <token>.
  * Deja el payload decodificado en req.user = { id, role }.
+ * Se usa como middleware en cada ruta que requiere sesión activa.
+ *
+ * @param {import('express').Request}  req
+ * @param {import('express').Response} _res
+ * @param {import('express').NextFunction} next
  */
 function authenticate(req, _res, next) {
   const header = req.headers.authorization || '';
@@ -33,6 +38,9 @@ function authenticate(req, _res, next) {
  * authorize(...roles): RBAC. Permite el paso solo si el rol del usuario
  * está dentro de la lista permitida para el endpoint.
  * Uso: router.get('/admin', authenticate, authorize('admin'), handler)
+ *
+ * @param {...string} roles  Roles permitidos (ej: 'admin')
+ * @returns {import('express').RequestHandler}
  */
 function authorize(...roles) {
   return (req, _res, next) => {
@@ -50,7 +58,11 @@ function authorize(...roles) {
  * authorizeSelfOrAdmin: ABAC / resource ownership.
  * Permite el acceso si el usuario es admin O si el :id del recurso coincide
  * con el id del usuario autenticado (es "dueño" del recurso).
- * @param {string} paramName  nombre del parámetro de ruta con el id del recurso
+ * Esto permite que GET /api/users/:id sea accesible tanto por el propio usuario
+ * como por un admin, sin exponer todos los recursos a todos los usuarios.
+ *
+ * @param {string} [paramName='id']  Nombre del parámetro de ruta con el id del recurso
+ * @returns {import('express').RequestHandler}
  */
 function authorizeSelfOrAdmin(paramName = 'id') {
   return (req, _res, next) => {

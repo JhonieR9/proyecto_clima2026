@@ -10,26 +10,35 @@ import { ref, watch, onBeforeUnmount } from 'vue';
 import { WeatherService, type CitySuggestion } from '../services/weather.service';
 
 const props = defineProps<{
+  /** true mientras BuscadorView está esperando la respuesta del clima */
   loading: boolean;
 }>();
 
 const emit = defineEmits<{
+  /** Emitido cuando el usuario confirma una ciudad (Enter, clic en Buscar o selección del desplegable) */
   (e: 'search', city: string): void;
 }>();
 
 const cityInput = ref('');
 const suggestions = ref<CitySuggestion[]>([]);
 const open = ref(false);          // ¿desplegable visible?
-const highlighted = ref(-1);      // índice resaltado para navegar con teclado
+const highlighted = ref(-1);      // índice resaltado para navegar con teclado (-1 = ninguno)
 const loadingSuggest = ref(false);
 
 const MIN_CHARS = 2;              // desde cuántas letras pedimos sugerencias
-const DEBOUNCE_MS = 300;
+const DEBOUNCE_MS = 300;          // tiempo de espera tras el último tecleo
+
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-// Token para ignorar respuestas viejas que llegan tarde (race condition).
+
+// Token para ignorar respuestas de peticiones antiguas (race condition).
+// Si el usuario escribe "ca", "cal", "cali" rápido, solo aplicamos la última respuesta.
 let requestSeq = 0;
 
-// Dispara la búsqueda de sugerencias con debounce cuando cambia el texto.
+/**
+ * Watcher del campo de texto. Con debounce de 300 ms, llama a suggestCities.
+ * El campo `seq` detecta respuestas fuera de orden: si llegó una respuesta de
+ * "cal" después de que el usuario ya escribió "cali", la ignora.
+ */
 watch(cityInput, (value) => {
   const q = value.trim();
   highlighted.value = -1;
@@ -63,11 +72,16 @@ watch(cityInput, (value) => {
   }, DEBOUNCE_MS);
 });
 
+/** Limpia el timer al desmontar el componente para evitar actualizaciones en componentes desmontados. */
 onBeforeUnmount(() => {
   if (debounceTimer) clearTimeout(debounceTimer);
 });
 
-// Selecciona una ciudad del desplegable y lanza la búsqueda del clima.
+/**
+ * Rellena el input con el nombre de la ciudad seleccionada y emite la búsqueda.
+ * Usar mousedown.prevent en el desplegable evita que el blur del input
+ * cierre la lista antes de que el clic se registre.
+ */
 function selectCity(s: CitySuggestion) {
   cityInput.value = s.name;
   open.value = false;
@@ -75,7 +89,7 @@ function selectCity(s: CitySuggestion) {
   emit('search', s.name);
 }
 
-// Buscar con el texto tal cual (botón o Enter sin resaltado).
+/** Lanza la búsqueda con el texto tal cual (sin selección del desplegable). */
 function handleSearch() {
   const city = cityInput.value.trim();
   if (!city) return;
@@ -83,7 +97,12 @@ function handleSearch() {
   emit('search', city);
 }
 
-// Navegación con teclado dentro del desplegable.
+/**
+ * Maneja la navegación por teclado en el desplegable.
+ * ArrowDown/Up mueven el resaltado de forma circular.
+ * Enter selecciona el resaltado o lanza búsqueda libre si nada está resaltado.
+ * Escape cierra el desplegable sin buscar.
+ */
 function onKeydown(e: KeyboardEvent) {
   if (!open.value || suggestions.value.length === 0) {
     if (e.key === 'Enter') handleSearch();
@@ -108,7 +127,11 @@ function onKeydown(e: KeyboardEvent) {
   }
 }
 
-// Cierra el desplegable al perder el foco (con pequeño retardo para permitir el clic).
+/**
+ * Cierra el desplegable cuando el input pierde el foco.
+ * El retardo de 150 ms da tiempo al evento mousedown del desplegable
+ * a dispararse antes de que se cierre la lista.
+ */
 function onBlur() {
   setTimeout(() => {
     open.value = false;
@@ -133,13 +156,14 @@ function onBlur() {
         @blur="onBlur"
       />
 
-      <!-- Desplegable de sugerencias -->
+      <!-- Desplegable de sugerencias: se muestra cuando hay resultados y el input tiene foco -->
       <ul
         v-if="open"
         id="city-suggestions"
         class="suggestions"
         role="listbox"
       >
+        <!-- mousedown.prevent evita que el blur del input cierre el desplegable antes del clic -->
         <li
           v-for="(s, i) in suggestions"
           :key="`${s.latitude},${s.longitude}`"
@@ -190,7 +214,7 @@ input:focus {
   border-color: #2a5298;
 }
 
-/* Desplegable */
+/* Desplegable: position: absolute para que no empuje el contenido debajo */
 .suggestions {
   position: absolute;
   top: calc(100% + 4px);
@@ -218,6 +242,7 @@ input:focus {
   cursor: pointer;
 }
 
+/* Estado activo: resaltado por teclado o por hover */
 .suggestion--active {
   background: #eef2ff;
 }

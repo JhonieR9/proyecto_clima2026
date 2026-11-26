@@ -8,6 +8,17 @@
 const WeatherService = require('../services/weather.service');
 
 const WeatherController = {
+  /**
+   * Devuelve el clima actual de la ciudad recibida en query.
+   * El campo `source` del resultado indica de dónde vino el dato:
+   *   memory / cache / stale / api_fresh / stale_fallback.
+   * La cabecera Cache-Control se alinea con FRESH_MS (15 min) para evitar que el
+   * navegador cachee más tiempo del que el servidor considera "fresco".
+   *
+   * @param {import('express').Request}  req  - req.query.city validado por Zod
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   // GET /api/weather?city=...
   async getWeather(req, res, next) {
     try {
@@ -24,6 +35,15 @@ const WeatherController = {
     }
   },
 
+  /**
+   * Devuelve sugerencias de ciudades para el autocompletado del frontend.
+   * Tiempo de caché en cliente: 5 min (menos que el clima porque el catálogo
+   * de ciudades cambia poco, pero queremos resultados actualizados en la UI).
+   *
+   * @param {import('express').Request}  req  - req.query.q validado por Zod
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   // GET /api/weather/suggest?q=...  (autocompletado de ciudades)
   async suggest(req, res, next) {
     try {

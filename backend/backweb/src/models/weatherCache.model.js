@@ -8,6 +8,15 @@
 const pool = require('../config/db');
 
 const WeatherCache = {
+  /**
+   * Devuelve la fila de caché de una ciudad, sin importar su antigüedad.
+   * El servicio de clima (weather.service.js) es quien decide qué hacer con el dato
+   * según su campo updated_at: servirlo fresco, stale o ignorarlo para ir a la API.
+   * Esta separación de responsabilidades facilita testear la lógica de frescura.
+   *
+   * @param {string} cityKey  Clave normalizada (minúsculas, sin acentos)
+   * @returns {Promise<object|null>}
+   */
   // Devuelve la última fila guardada para la clave normalizada de la ciudad.
   // El servicio decide si está fresca, stale o expirada usando updated_at.
   async findByKey(cityKey) {
@@ -21,6 +30,23 @@ const WeatherCache = {
     return rows[0] || null;
   },
 
+  /**
+   * Inserta o actualiza el clima de una ciudad (upsert por city_key).
+   * ON CONFLICT (city_key) DO UPDATE garantiza que haya exactamente una fila por
+   * ciudad y que updated_at siempre refleje el momento de la última actualización,
+   * que es el campo que el servicio usa para calcular la antigüedad del dato.
+   * NOW() se ejecuta en la BD para evitar desfases de reloj entre el servidor Node
+   * y PostgreSQL.
+   *
+   * @param {string}      cityKey       Clave normalizada (minúsculas, sin acentos)
+   * @param {string}      city          Nombre del municipio formateado por Open-Meteo
+   * @param {number}      latitude
+   * @param {number}      longitude
+   * @param {number}      temperature   Temperatura en °C
+   * @param {string}      conditionText Descripción textual de la condición WMO
+   * @param {number|null} humidity      Humedad relativa en % (null si no disponible)
+   * @returns {Promise<void>}
+   */
   // Inserta o actualiza el clima de una ciudad (Upsert por city_key).
   async upsertWeather(cityKey, city, latitude, longitude, temperature, conditionText, humidity) {
     const query = `

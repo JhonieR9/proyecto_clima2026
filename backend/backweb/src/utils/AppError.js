@@ -20,23 +20,57 @@ class AppError extends Error {
     this.statusCode = statusCode;
     this.code = code;
     this.details = details;
-    this.isOperational = true; // Error esperado, no un bug inesperado
+    // isOperational distingue errores de negocio (esperados, se muestran al cliente)
+    // de bugs de programación (inesperados, solo se loguean en el servidor).
+    this.isOperational = true;
     Error.captureStackTrace(this, this.constructor);
   }
 
-  // Atajos de uso común
+  /**
+   * Error 400: datos de entrada inválidos o incompletos.
+   * Se usa cuando la validación de Zod falla o faltan campos obligatorios.
+   *
+   * @param {string} [message]
+   * @param {object} [details]  Array de { field, message } de Zod
+   */
   static badRequest(message, details) {
     return new AppError(400, message, 'BAD_REQUEST', details);
   }
+
+  /**
+   * Error 401: el usuario no está autenticado o su token es inválido.
+   * Se usa cuando no hay token, está expirado o las credenciales son incorrectas.
+   *
+   * @param {string} [message]
+   */
   static unauthorized(message = 'No autenticado') {
     return new AppError(401, message, 'UNAUTHORIZED');
   }
+
+  /**
+   * Error 403: el usuario está autenticado pero no tiene permisos.
+   * Se usa cuando el rol no es suficiente o el recurso no le pertenece.
+   *
+   * @param {string} [message]
+   */
   static forbidden(message = 'No autorizado') {
     return new AppError(403, message, 'FORBIDDEN');
   }
+
+  /**
+   * Error 404: el recurso solicitado no existe en la base de datos.
+   *
+   * @param {string} [message]
+   */
   static notFound(message = 'Recurso no encontrado') {
     return new AppError(404, message, 'NOT_FOUND');
   }
+
+  /**
+   * Error 409: conflicto con el estado actual (ej: correo ya registrado).
+   *
+   * @param {string} message
+   */
   static conflict(message) {
     return new AppError(409, message, 'CONFLICT');
   }

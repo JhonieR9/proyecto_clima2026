@@ -10,6 +10,7 @@ const TaskQueue = require('../src/utils/taskQueue');
 
 const tick = (ms = 10) => new Promise((r) => setTimeout(r, ms));
 
+// Caso base: una tarea encolada debe ejecutarse antes de que expire el tick.
 test('ejecuta una tarea encolada', async () => {
   const q = new TaskQueue({ name: 'test', concurrency: 1 });
   let ran = false;
@@ -18,6 +19,8 @@ test('ejecuta una tarea encolada', async () => {
   assert.equal(ran, true);
 });
 
+// La deduplicación por clave evita que múltiples peticiones de la misma ciudad
+// lancen múltiples revalidaciones a Open-Meteo al mismo tiempo.
 test('de-duplica tareas con la misma clave', async () => {
   const q = new TaskQueue({ name: 'test', concurrency: 1 });
   let count = 0;
@@ -33,6 +36,8 @@ test('de-duplica tareas con la misma clave', async () => {
   assert.equal(count, 1, 'solo corre una vez');
 });
 
+// Una vez que la tarea termina, la clave debe liberarse para permitir nuevas búsquedas
+// de la misma ciudad en el futuro (ej. la siguiente consulta después de STALE_MS).
 test('permite re-encolar una clave tras completarse', async () => {
   const q = new TaskQueue({ name: 'test', concurrency: 1 });
   let count = 0;
@@ -44,6 +49,8 @@ test('permite re-encolar una clave tras completarse', async () => {
   assert.equal(count, 2);
 });
 
+// Verifica que la cola no excede la concurrencia configurada,
+// lo cual protege a Open-Meteo de ser bombardeado.
 test('respeta la concurrencia máxima', async () => {
   const q = new TaskQueue({ name: 'test', concurrency: 2 });
   let activeNow = 0;
@@ -59,6 +66,8 @@ test('respeta la concurrencia máxima', async () => {
   assert.ok(maxSeen <= 2, `nunca más de 2 a la vez (vio ${maxSeen})`);
 });
 
+// Verifica el mecanismo de reintentos: una tarea que falla en el primer intento
+// debe reintentarse y tener éxito en el segundo. Esto protege ante caídas transitorias de la API.
 test('reintenta una tarea que falla y luego acierta', async () => {
   const q = new TaskQueue({ name: 'test', concurrency: 1, maxRetries: 2, baseDelayMs: 5 });
   let attempts = 0;

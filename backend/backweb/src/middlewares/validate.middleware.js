@@ -8,8 +8,15 @@
 const AppError = require('../utils/AppError');
 
 /**
- * @param {import('zod').ZodSchema} schema
- * @param {'body'|'query'|'params'} source
+ * Genera un middleware de validación con Zod para body, query o params.
+ * Si la validación falla, lanza AppError 400 con detalles por campo para que
+ * el cliente (o el test) sepa exactamente qué campo es incorrecto.
+ * Si pasa, sustituye req[source] por result.data, que ya viene transformado
+ * (p. ej. el email en minúsculas, el texto recortado).
+ *
+ * @param {import('zod').ZodSchema} schema  Schema Zod a aplicar
+ * @param {'body'|'query'|'params'} [source='body']  Parte de la request a validar
+ * @returns {import('express').RequestHandler}
  */
 function validate(schema, source = 'body') {
   return (req, _res, next) => {
