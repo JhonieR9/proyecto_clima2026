@@ -6,6 +6,7 @@
 // Conectado con: db.js (pool de conexiones), auth.service.js (login/registro), user.controller.js.
 // Rol: Única capa que toca la contraseña. Garantiza que nunca salga en texto plano.
 const pool = require('../config/db');
+const bcrypt = require('bcryptjs');
 
 // Factor de coste de bcrypt. 12 es el mínimo recomendado hoy; configurable por env.
 const BCRYPT_ROUNDS = Number(process.env.BCRYPT_ROUNDS) || 12;
