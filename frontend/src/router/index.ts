@@ -10,6 +10,14 @@ import type { RouteRecordRaw } from 'vue-router';
 import { useWeatherStore } from '../stores/weather.store';
 import { useAuthStore } from '../stores/auth.store';
 
+/**
+ * Definición de rutas de la aplicación.
+ * Se usan imports dinámicos (lazy loading) para que Vite haga code splitting:
+ * cada vista se carga solo cuando el usuario navega a ella.
+ *
+ * meta.requiresAuth: la ruta exige sesión activa.
+ * meta.guestOnly:    la ruta es solo para usuarios no autenticados.
+ */
 const routes: RouteRecordRaw[] = [
   {
     path: '/login',
@@ -34,7 +42,9 @@ const routes: RouteRecordRaw[] = [
     name: 'weather-result',
     component: () => import('../views/ResultadoClimaView.vue'),
     meta: { requiresAuth: true },
-    // Navigation Guard: solo permite entrar si hay datos en el store
+    // Guard de ruta: evita que el usuario llegue a /result sin haber consultado antes.
+    // Si currentWeather es null (p. ej. el usuario escribe /result directamente
+    // en la barra de direcciones), lo manda al buscador.
     beforeEnter: (_to, _from, next) => {
       const store = useWeatherStore();
       if (!store.currentWeather) {
@@ -57,6 +67,19 @@ const router = createRouter({
   routes,
 });
 
+/**
+ * Guard global asíncrono de control de acceso.
+ * Se ejecuta antes de cada navegación. Es asíncrono porque necesita intentar
+ * rehidratar la sesión (llamar al backend) antes de decidir si redirigir.
+ *
+ * Lógica:
+ *   1. Si no hay sesión en memoria, intenta recuperarla vía cookie de refresh.
+ *      (Esto sucede tras un refresco de página, donde Pinia se reinicia.)
+ *   2. Si la ruta requiere auth y no hay sesión: redirige al login con `redirect`
+ *      para volver a la misma ruta tras iniciar sesión.
+ *   3. Si la ruta es guestOnly y ya hay sesión: redirige al inicio
+ *      (el usuario logueado no tiene por qué ver el login/registro).
+ */
 // Navigation Guard global ASÍNCRONO para control de acceso.
 // CORE: "Navigation Guards asíncronos para control de acceso".
 router.beforeEach(async (to) => {

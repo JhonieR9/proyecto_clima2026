@@ -10,11 +10,23 @@ const bcrypt = require('bcryptjs');
 const pool = require('./db');
 const runMigrations = require('./migrate');
 
+// Credenciales del administrador. Configurables por variables de entorno
+// para que los entornos de CI/CD no usen valores hardcodeados.
 const EMAIL = process.env.ADMIN_EMAIL || 'admin@clima.com';
 const PASSWORD = process.env.ADMIN_PASSWORD || 'Admin12345';
 const NAME = process.env.ADMIN_NAME || 'Administrador';
+
+// Factor de coste de bcrypt. 12 rondas es el mínimo recomendado actualmente.
 const ROUNDS = Number(process.env.BCRYPT_ROUNDS) || 12;
 
+/**
+ * Crea o asciende al usuario administrador.
+ * - Si el correo no existe: inserta con rol 'admin' y contraseña hasheada.
+ * - Si ya existe pero su rol no es 'admin': lo asciende (UPDATE).
+ * - Si ya es admin: no hace nada (idempotente).
+ *
+ * @returns {Promise<void>}
+ */
 async function seedAdmin() {
   // Asegura que las tablas existan antes de insertar.
   await runMigrations();

@@ -8,6 +8,17 @@
 const { randomUUID } = require('crypto');
 const logger = require('../utils/logger');
 
+/**
+ * Middleware de correlación de peticiones.
+ * - Si el cliente envía x-correlation-id, lo reutiliza; si no, genera un UUID nuevo.
+ *   Reutilizarlo permite que un API gateway o el frontend rastreen la misma operación
+ *   end-to-end con un único identificador.
+ * - Al terminar la respuesta (evento 'finish'), registra un log de acceso con duración.
+ *
+ * @param {import('express').Request}  req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
 function correlationId(req, res, next) {
   // Respeta el id entrante si el cliente ya lo envió; si no, genera uno.
   const id = req.headers['x-correlation-id'] || randomUUID();

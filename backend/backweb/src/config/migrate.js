@@ -114,10 +114,19 @@ const schema = [
   },
 ];
 
+/**
+ * Ejecuta todas las migraciones del array `schema` de forma idempotente.
+ * Para cada tabla: crea si no existe, añade columnas faltantes y ejecuta
+ * las sentencias extra (índices). Es seguro llamarlo varias veces en el mismo servidor.
+ *
+ * @returns {Promise<void>}
+ */
 async function runMigrations() {
   for (const entry of schema) {
+    // CREATE TABLE IF NOT EXISTS garantiza la idempotencia en la primera ejecución.
     await pool.query(entry.create);
 
+    // Consulta las columnas existentes para detectar las que faltan.
     const { rows } = await pool.query(
       'SELECT column_name FROM information_schema.columns WHERE table_name = $1',
       [entry.table]
@@ -125,6 +134,7 @@ async function runMigrations() {
     const existing = rows.map((r) => r.column_name);
 
     for (const col of entry.columns) {
+      // ALTER TABLE ... ADD COLUMN IF NOT EXISTS es también idempotente en PG ≥ 9.6.
       if (!existing.includes(col.name)) {
         await pool.query(`ALTER TABLE ${entry.table} ADD COLUMN IF NOT EXISTS ${col.name} ${col.def}`);
         console.log(`Columna añadida: ${entry.table}.${col.name}`);

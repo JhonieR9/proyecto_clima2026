@@ -19,8 +19,11 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 
-// Conecta el interceptor de Axios con el store de auth (token en memoria,
-// refresh rotativo y logout), evitando la dependencia circular en la carga.
+// Conecta el interceptor de Axios con el store de auth.
+// Se hace aquí (no en http.ts) porque en http.ts no se puede importar el store
+// directamente: Pinia aún no existe en ese momento y el import circular
+// causaría que uno de los dos módulos reciba un objeto vacío.
+// Pasando callbacks, http.ts solo los llama cuando los necesita (lazy).
 const authStore = useAuthStore(pinia);
 configureHttpAuth({
   getToken: () => authStore.accessToken,
@@ -28,7 +31,9 @@ configureHttpAuth({
   onLogout: () => authStore.clearSession(),
 });
 
-// Intenta rehidratar la sesión (cookie de refresh) antes de montar la app.
+// Intenta rehidratar la sesión desde la cookie de refresh antes de montar la app.
+// Si se omitiera este paso, el guard del router vería isAuthenticated=false en el
+// primer render y redirigiría al login incluso si el usuario tiene sesión válida.
 authStore.restoreSession().finally(() => {
   app.mount('#app');
 });

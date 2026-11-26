@@ -10,13 +10,18 @@ import { computed } from 'vue';
 import type { WeatherSource } from '../services/weather.service';
 
 const props = defineProps<{
+  /** Origen del dato devuelto por el backend (memory | cache | stale | api_fresh | stale_fallback) */
   source: WeatherSource;
 }>();
 
-// Agrupamos los 5 origenes del backend en 3 estados visuales:
-//   cached  -> vino de cache (memoria L1 o PostgreSQL L2 fresco)
-//   fresh   -> consultado directo a la API externa
-//   stale   -> servido de cache vieja (revalidando) o respaldo por caida de la API
+/**
+ * Agrupa los 5 orígenes del backend en 3 estados visuales:
+ *   cached  -> vino de caché (memoria L1 o PostgreSQL L2 fresco)
+ *   fresh   -> consultado directo a la API externa
+ *   stale   -> servido de caché vieja (revalidando) o respaldo por caída de la API
+ *
+ * Esta agrupación simplifica el diseño: 3 colores en vez de 5.
+ */
 type BadgeKind = 'cached' | 'fresh' | 'stale';
 
 const kind = computed<BadgeKind>(() => {
@@ -34,6 +39,10 @@ const kind = computed<BadgeKind>(() => {
   }
 });
 
+/**
+ * Clase CSS dinámica según el estado del dato.
+ * Las tres clases definen los tres colores de la insignia: verde, índigo y ámbar.
+ */
 // Clase CSS segun el estado.
 const badgeClass = computed(() => ({
   cached: 'source-cache',
@@ -49,6 +58,7 @@ const badgeClass = computed(() => ({
       <span class="source-icon" aria-hidden="true">📦</span>
       <div class="source-text">
         <strong>Recuperado desde Caché</strong>
+        <!-- Distingue L1 (memoria, latencia cero) de L2 (PostgreSQL, una sola query) -->
         <small v-if="source === 'memory'">Memoria (L1) &mdash; Cero latencia</small>
         <small v-else>PostgreSQL (L2) &mdash; Cero latencia extra</small>
       </div>
@@ -68,6 +78,7 @@ const badgeClass = computed(() => ({
       <span class="source-icon" aria-hidden="true">♻️</span>
       <div class="source-text">
         <strong>Dato en Caché (revalidando)</strong>
+        <!-- stale_fallback: la API no respondió; stale: se sirve y se revalida en segundo plano -->
         <small v-if="source === 'stale_fallback'">La API no respondió &mdash; se muestra el último dato conocido</small>
         <small v-else>Servido al instante &mdash; actualizándose en segundo plano</small>
       </div>

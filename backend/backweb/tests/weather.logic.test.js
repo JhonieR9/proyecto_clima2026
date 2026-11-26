@@ -8,21 +8,28 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { cityKeyOf, orderSuggestions } = require('../src/services/weather.service');
 
+// Verifica la normalización básica: tildes eliminadas y conversión a minúsculas.
 test('cityKeyOf quita acentos y pasa a minúsculas', () => {
   assert.equal(cityKeyOf('Bogotá'), 'bogota');
   assert.equal(cityKeyOf('Medellín'), 'medellin');
   assert.equal(cityKeyOf('BOGOTA'), 'bogota');
 });
 
+// Este test es el más crítico: garantiza que "Bogota" y "Bogotá" caigan
+// en la misma entrada de caché y no generen dos filas distintas en la BD.
 test('cityKeyOf iguala variantes con y sin tilde', () => {
   assert.equal(cityKeyOf('Bogota'), cityKeyOf('Bogotá'));
   assert.equal(cityKeyOf('  BOGOTÁ  '), 'bogota');
 });
 
+// Los espacios sobrantes antes y después deben eliminarse para evitar
+// duplicados como "cali" y " cali " en la misma caché.
 test('cityKeyOf recorta espacios sobrantes', () => {
   assert.equal(cityKeyOf('  Cali '), 'cali');
 });
 
+// Verifica que las ciudades colombianas suben al inicio del desplegable
+// cuando se detectan por el campo country.
 test('orderSuggestions pone Colombia primero (por country)', () => {
   const input = [
     { name: 'Cali', country: 'Turquía' },
@@ -33,6 +40,8 @@ test('orderSuggestions pone Colombia primero (por country)', () => {
   assert.equal(out[0].country, 'Colombia');
 });
 
+// Verifica que la detección de Colombia también funciona por country_code 'CO',
+// ya que la API puede devolver el campo en cualquiera de las dos formas.
 test('orderSuggestions reconoce Colombia por country_code CO', () => {
   const input = [
     { name: 'X', country_code: 'US' },
@@ -42,6 +51,8 @@ test('orderSuggestions reconoce Colombia por country_code CO', () => {
   assert.equal(out[0].country_code, 'CO');
 });
 
+// Verifica la estabilidad del sort: las ciudades colombianas deben mantener
+// su orden relativo entre ellas (la que venía primero sigue primero).
 test('orderSuggestions es estable dentro de cada grupo', () => {
   // Dos de Colombia en cierto orden: debe conservarse entre ellas.
   const input = [
@@ -55,6 +66,7 @@ test('orderSuggestions es estable dentro de cada grupo', () => {
   assert.equal(out[2].name, 'Otra');
 });
 
+// La función debe manejar listas vacías sin lanzar excepciones.
 test('orderSuggestions no rompe con lista vacía', () => {
   assert.deepEqual(orderSuggestions([]), []);
 });

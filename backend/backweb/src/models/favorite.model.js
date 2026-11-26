@@ -8,6 +8,13 @@
 const pool = require('../config/db');
 
 const FavoriteModel = {
+  /**
+   * Devuelve todas las ciudades favoritas de un usuario, ordenadas de más reciente a más antigua.
+   * El ORDER BY created_at DESC asegura que las últimas agregadas aparecen primero en la UI.
+   *
+   * @param {number} userId
+   * @returns {Promise<Array<{id,city,city_key,latitude,longitude,created_at}>>}
+   */
   // Lista las favoritas de un usuario (más recientes primero).
   async findByUser(userId) {
     const { rows } = await pool.query(
@@ -20,6 +27,15 @@ const FavoriteModel = {
     return rows;
   },
 
+  /**
+   * Agrega una ciudad a favoritas de forma idempotente.
+   * ON CONFLICT (user_id, city_key) evita duplicados sin lanzar un error:
+   * si la ciudad ya existe, actualiza el nombre visual (city) por si cambió
+   * la capitalización y devuelve la fila resultante.
+   *
+   * @param {{ userId: number, city: string, cityKey: string, latitude: number|null, longitude: number|null }} param0
+   * @returns {Promise<{id,city,city_key,latitude,longitude,created_at}>}
+   */
   // Agrega una favorita. Idempotente: si ya existe (mismo user + city_key),
   // no la duplica y devuelve la fila existente.
   async add({ userId, city, cityKey, latitude, longitude }) {
@@ -33,6 +49,15 @@ const FavoriteModel = {
     return rows[0];
   },
 
+  /**
+   * Elimina una favorita verificando que pertenece al usuario que la solicita.
+   * La condición AND user_id = $2 en el WHERE impide que un usuario borre favoritas ajenas.
+   * Devuelve null si no existe o no le pertenece (el controlador lo convierte en 404).
+   *
+   * @param {number} userId  Usuario autenticado
+   * @param {number} id      ID de la favorita a eliminar
+   * @returns {Promise<{id: number}|null>}
+   */
   // Elimina una favorita del usuario por id (solo si le pertenece).
   async remove(userId, id) {
     const { rows } = await pool.query(

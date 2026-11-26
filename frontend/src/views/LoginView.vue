@@ -14,12 +14,22 @@ const router = useRouter();
 const route = useRoute();
 const auth = useAuthStore();
 
+/**
+ * Estado del formulario. Se usa reactive (no ref) para agrupar ambos campos.
+ * El tipo explícito elimina el 'any' implícito de un objeto sin anotar.
+ */
 // Formulario tipado (cero 'any').
 const form = reactive<{ email: string; password: string }>({
   email: '',
   password: '',
 });
 
+/**
+ * Envía las credenciales al store de auth.
+ * Si el login tiene éxito, redirige a la ruta que el usuario intentaba visitar
+ * (guardada en route.query.redirect por el guard del router) o al inicio.
+ * Si falla, auth.error ya contiene el mensaje y la plantilla lo muestra.
+ */
 const handleSubmit = async () => {
   try {
     await auth.login({ email: form.email, password: form.password });
@@ -39,6 +49,7 @@ const handleSubmit = async () => {
       <p class="auth-subtitle">Accede a tu cuenta</p>
     </div>
 
+    <!-- @submit.prevent evita el envío nativo del formulario (recarga de página) -->
     <form class="auth-form" @submit.prevent="handleSubmit">
       <label class="field">
         <span class="field-label">Email</span>
@@ -64,6 +75,7 @@ const handleSubmit = async () => {
         />
       </label>
 
+      <!-- Aviso de error con animación fade+slide para que sea notorio pero elegante -->
       <Transition name="alert">
         <div v-if="auth.error" class="alert alert--error" role="alert">
           <span class="alert-icon" aria-hidden="true">!</span>

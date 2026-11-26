@@ -9,6 +9,14 @@ const UserModel = require('../models/user.model');
 const AppError = require('../utils/AppError');
 
 const UserController = {
+  /**
+   * Devuelve todos los usuarios del sistema (sin contraseñas).
+   * Solo accesible por administradores (guard en la ruta).
+   *
+   * @param {import('express').Request}  req
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   async getAll(req, res, next) {
     try {
       const users = await UserModel.findAll();
@@ -18,6 +26,14 @@ const UserController = {
     }
   },
 
+  /**
+   * Devuelve un usuario concreto por su ID.
+   * El guard authorizeSelfOrAdmin asegura que solo el dueño del recurso o un admin pueda verlo.
+   *
+   * @param {import('express').Request}  req  - req.params.id: ID del usuario a consultar
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   async getById(req, res, next) {
     try {
       const user = await UserModel.findById(req.params.id);
@@ -28,6 +44,15 @@ const UserController = {
     }
   },
 
+  /**
+   * Crea un nuevo usuario desde el panel de administración.
+   * El registro público se hace a través de /api/auth/register (con rate limiting).
+   * Verifica que el correo no esté ya registrado antes de insertar.
+   *
+   * @param {import('express').Request}  req  - req.body: { name, email, password }
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   async create(req, res, next) {
     try {
       const { name, email, password } = req.body;
@@ -47,6 +72,15 @@ const UserController = {
     }
   },
 
+  /**
+   * Actualiza nombre y correo de un usuario.
+   * No permite cambiar el rol ni la contraseña por esta vía para evitar
+   * escaladas de privilegio accidentales desde la interfaz.
+   *
+   * @param {import('express').Request}  req  - req.params.id, req.body: { name, email }
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   async update(req, res, next) {
     try {
       const { name, email } = req.body;
@@ -62,6 +96,15 @@ const UserController = {
     }
   },
 
+  /**
+   * Elimina un usuario del sistema.
+   * ON DELETE CASCADE en la BD elimina automáticamente sus refresh tokens y favoritas.
+   * Solo accesible por administradores (guard en la ruta).
+   *
+   * @param {import('express').Request}  req  - req.params.id: ID del usuario a eliminar
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   async remove(req, res, next) {
     try {
       const user = await UserModel.delete(req.params.id);

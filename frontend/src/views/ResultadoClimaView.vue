@@ -21,39 +21,59 @@ const router = useRouter();
 const weatherStore = useWeatherStore();
 const favoriteStore = useFavoriteStore();
 
-// Tema (gradiente + tipo de ícono) derivado de la condición del clima.
+/**
+ * Computed: tema visual (gradiente + tipo de ícono) derivado de la condición del clima.
+ * Se recalcula automáticamente si currentWeather cambia (aunque en esta vista no debería).
+ */
 const theme = computed(() =>
   themeFromCondition(weatherStore.currentWeather?.condition_text ?? '')
 );
 
-// Redondea la temperatura para mostrarla grande y limpia.
+/**
+ * Computed: temperatura redondeada para mostrar el número grande sin decimales.
+ * Math.round evita "19.9°C" en lugar de "20°C" (más limpio visualmente).
+ */
 const temp = computed(() =>
   Math.round(Number(weatherStore.currentWeather?.temperature ?? 0))
 );
 
-// ¿La ciudad actual ya es favorita?
+/**
+ * Computed: ¿la ciudad actual ya está en las favoritas del usuario?
+ * Se usa para alternar el ícono de estrella (★ llena / ☆ vacía).
+ */
 const isFav = computed(() =>
   weatherStore.currentWeather
     ? favoriteStore.isFavorite(weatherStore.currentWeather.city)
     : false
 );
 
+/** Ref para evitar doble clic mientras se guarda/elimina la favorita. */
 const savingFav = ref(false);
 
-// Asegura tener la lista de favoritas para saber el estado de la estrella.
+/**
+ * Carga la lista de favoritas si aún está vacía.
+ * Permite que la estrella muestre el estado correcto aunque el usuario
+ * haya llegado a esta vista directamente (ej. navegación hacia atrás).
+ */
 onMounted(() => {
   if (favoriteStore.items.length === 0) {
     favoriteStore.load().catch(() => {});
   }
 });
 
-// Alterna favorita: si no está, la agrega; si está, la quita.
+/**
+ * Alterna el estado de favorita de la ciudad actual.
+ * Si ya es favorita: la elimina buscando su ID en la lista local.
+ * Si no es favorita: la agrega con las coordenadas del resultado del clima.
+ * savingFav previene doble procesamiento durante la operación.
+ */
 const toggleFavorite = async () => {
   const w = weatherStore.currentWeather;
   if (!w || savingFav.value) return;
   savingFav.value = true;
   try {
     if (isFav.value) {
+      // Busca el ID de la favorita existente para poder eliminarla.
       const existing = favoriteStore.items.find(
         (f) => f.city.trim().toLowerCase() === w.city.trim().toLowerCase()
       );
@@ -62,12 +82,17 @@ const toggleFavorite = async () => {
       await favoriteStore.add(w.city, w.latitude, w.longitude);
     }
   } catch {
-    /* noop */
+    /* noop: si falla, la estrella vuelve a su estado anterior */
   } finally {
     savingFav.value = false;
   }
 };
 
+/**
+ * Vuelve al buscador y limpia el estado del clima.
+ * clearState() pone currentWeather a null, lo que hace que el guard de
+ * beforeEnter de /result impida volver accidentalmente con F5.
+ */
 const goBack = () => {
   weatherStore.clearState();
   router.push({ name: 'home' });
@@ -81,12 +106,12 @@ const goBack = () => {
     :style="{ background: theme.gradient }"
   >
     <div class="result-card">
-      <!-- Botón volver -->
+      <!-- Botón volver: limpia el estado del store y navega al buscador -->
       <button class="btn-back" @click="goBack" aria-label="Volver al inicio">
         ← Volver
       </button>
 
-      <!-- Botón favorita (estrella) -->
+      <!-- Botón favorita: estrella llena (★) si es favorita, vacía (☆) si no lo es -->
       <button
         class="btn-fav"
         :class="{ 'btn-fav--on': isFav }"
@@ -101,26 +126,26 @@ const goBack = () => {
       <!-- Ciudad -->
       <h2 class="city-name">{{ weatherStore.currentWeather.city }}</h2>
 
-      <!-- Ícono animado según el clima -->
+      <!-- Ícono animado SVG según el tipo de tiempo (sunny, rain, snow, etc.) -->
       <div class="icon-wrap">
         <WeatherIcon :kind="theme.kind" :size="130" />
       </div>
 
-      <!-- Temperatura principal -->
+      <!-- Temperatura principal: valor redondeado en grande -->
       <div class="temperature-display" aria-label="Temperatura actual">
         <span class="temp-value">{{ temp }}</span>
         <span class="temp-unit">°C</span>
       </div>
       <p class="condition-text">{{ weatherStore.currentWeather.condition_text }}</p>
 
-      <!-- Coordenadas -->
+      <!-- Coordenadas y humedad (opcional: solo si la BD tiene el campo humidity) -->
       <FilaCoordenadas
         :latitude="weatherStore.currentWeather.latitude"
         :longitude="weatherStore.currentWeather.longitude"
         :humidity="weatherStore.currentWeather.humidity"
       />
 
-      <!-- Indicador de origen del dato -->
+      <!-- Insignia de origen del dato: demuestra qué nivel de caché sirvió el resultado -->
       <InsigniaOrigen
         v-if="weatherStore.sourceInfo"
         :source="weatherStore.sourceInfo"
@@ -195,6 +220,7 @@ const goBack = () => {
 }
 .btn-fav:hover:not(:disabled) { background: rgba(255, 255, 255, 0.3); transform: scale(1.08); }
 .btn-fav:disabled { opacity: 0.6; cursor: not-allowed; }
+/* Color dorado cuando la ciudad ya es favorita */
 .btn-fav--on { color: #ffd94a; }
 
 .city-name {

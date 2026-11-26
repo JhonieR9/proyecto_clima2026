@@ -16,14 +16,24 @@ const router = useRouter();
 const weatherStore = useWeatherStore();
 const favoriteStore = useFavoriteStore();
 
-// Carga las favoritas del usuario al entrar.
+/**
+ * Carga las favoritas del usuario al entrar a la vista.
+ * El .catch vacío evita que un fallo de red (sesión expirada, servidor caído)
+ * rompa la carga de la página; simplemente no se mostrarán las favoritas.
+ */
 onMounted(() => {
   favoriteStore.load().catch(() => {
     /* si falla (p. ej. sin sesión), simplemente no se muestran */
   });
 });
 
-// Ejecuta la búsqueda y redirige a la vista de resultados.
+/**
+ * Ejecuta la búsqueda de clima para una ciudad y navega a /result si hay datos.
+ * Si la búsqueda falla, el error queda en weatherStore.error y el guard de la ruta
+ * impide la navegación a /result (porque currentWeather será null).
+ *
+ * @param city  Nombre de la ciudad a consultar
+ */
 const handleSearch = async (city: string) => {
   await weatherStore.searchCityWeather(city);
   if (weatherStore.currentWeather) {
@@ -31,12 +41,18 @@ const handleSearch = async (city: string) => {
   }
 };
 
-// Consultar el clima de una favorita (un clic, sin volver a escribir).
+/**
+ * Consulta el clima de una ciudad favorita con un clic.
+ * Permite al usuario ver el clima de sus favoritas sin volver a escribir el nombre.
+ */
 const openFavorite = (city: string) => {
   handleSearch(city);
 };
 
-// Quitar una favorita.
+/**
+ * Elimina una favorita del usuario.
+ * El .catch vacío evita que un error de red bloquee la UI.
+ */
 const removeFavorite = async (id: number) => {
   try {
     await favoriteStore.remove(id);
@@ -55,16 +71,16 @@ const removeFavorite = async (id: number) => {
       <p class="home-subtitle">Sistema de Caching con PostgreSQL</p>
     </div>
 
-    <!-- Buscador (componente reutilizable) -->
+    <!-- Buscador (componente reutilizable con autocompletado) -->
     <CajaBusqueda :loading="weatherStore.loading" @search="handleSearch" />
 
-    <!-- Spinner de carga -->
+    <!-- Spinner de carga: visible mientras weatherStore.loading sea true -->
     <div v-if="weatherStore.loading" class="loading-state" role="status" aria-live="polite">
       <div class="spinner" aria-hidden="true"></div>
       <p>Consultando datos meteorológicos...</p>
     </div>
 
-    <!-- Error -->
+    <!-- Error: aparece con animación de fade si la búsqueda falla -->
     <Transition name="alert">
       <div v-if="weatherStore.error && !weatherStore.loading" class="alert alert--error" role="alert">
         <span class="alert-icon" aria-hidden="true">!</span>
@@ -73,9 +89,11 @@ const removeFavorite = async (id: number) => {
     </Transition>
 
     <!-- ===== Favoritas del usuario ===== -->
+    <!-- Solo se muestra si el usuario tiene al menos una favorita cargada -->
     <div v-if="favoriteStore.items.length > 0" class="favorites">
       <p class="favorites-title">⭐ Tus ciudades favoritas</p>
       <ul class="favorites-list">
+        <!-- Cada chip tiene el botón de abrir y el de eliminar (×) -->
         <li v-for="fav in favoriteStore.items" :key="fav.id" class="fav-chip">
           <button class="fav-open" @click="openFavorite(fav.city)" :title="`Ver clima de ${fav.city}`">
             {{ fav.city }}
@@ -232,6 +250,7 @@ const removeFavorite = async (id: number) => {
   justify-content: center;
 }
 
+/* Chip con borde redondeado que agrupa el botón de abrir y el de eliminar */
 .fav-chip {
   display: inline-flex;
   align-items: center;

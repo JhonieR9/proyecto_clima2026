@@ -7,10 +7,20 @@
 // Rol: Protección contra abuso. Limita intentos de fuerza bruta en los endpoints sensibles.
 const rateLimit = require('express-rate-limit');
 
+// Ventana de tiempo compartida entre ambos limitadores. 15 min es el estándar OWASP.
 const windowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000; // 15 min
+
+// Máximo de peticiones por ventana para rutas generales y para auth respectivamente.
 const generalMax = Number(process.env.RATE_LIMIT_MAX) || 100;
 const authMax = Number(process.env.AUTH_RATE_LIMIT_MAX) || 10;
 
+/**
+ * Respuesta de error al exceder el límite. Usa el mismo formato que errorHandler
+ * para que el frontend no necesite manejar un caso especial para los 429.
+ *
+ * @param {import('express').Request}  req
+ * @param {import('express').Response} res
+ */
 // Mensaje de error coherente con nuestro formato global
 function limitMessage(req, res) {
   res.status(429).json({
@@ -24,8 +34,8 @@ function limitMessage(req, res) {
 const apiLimiter = rateLimit({
   windowMs,
   max: generalMax,
-  standardHeaders: true,
-  legacyHeaders: false,
+  standardHeaders: true,  // devuelve RateLimit-* en la respuesta
+  legacyHeaders: false,   // desactiva los X-RateLimit-* deprecados
   handler: limitMessage,
 });
 

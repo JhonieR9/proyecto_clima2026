@@ -13,6 +13,9 @@ import { useAuthStore } from '../stores/auth.store';
 const router = useRouter();
 const auth = useAuthStore();
 
+/**
+ * Estado del formulario. Tipado explícitamente para evitar 'any'.
+ */
 // Formulario tipado (cero 'any').
 const form = reactive<{ name: string; email: string; password: string }>({
   name: '',
@@ -20,8 +23,15 @@ const form = reactive<{ name: string; email: string; password: string }>({
   password: '',
 });
 
+/** Controla la visibilidad del aviso de éxito antes de redirigir al login. */
 const success = ref(false);
 
+/**
+ * Envía los datos de registro al store.
+ * Si tiene éxito: muestra el aviso de confirmación y redirige al login tras 900 ms.
+ * La pausa de 900 ms es suficiente para que el usuario vea el mensaje sin sentir una espera.
+ * Si falla: auth.error contiene el mensaje del backend y la plantilla lo muestra.
+ */
 const handleSubmit = async () => {
   success.value = false;
   try {
@@ -81,12 +91,14 @@ const handleSubmit = async () => {
         />
       </label>
 
+      <!-- Aviso de error (ej. correo ya registrado) con animación de entrada -->
       <Transition name="alert">
         <div v-if="auth.error" class="alert alert--error" role="alert">
           <span class="alert-icon" aria-hidden="true">!</span>
           <span class="alert-text">{{ auth.error }}</span>
         </div>
       </Transition>
+      <!-- Aviso de éxito: se muestra 900 ms antes de redirigir al login -->
       <Transition name="alert">
         <div v-if="success" class="alert alert--success" role="status">
           <span class="alert-icon" aria-hidden="true">✓</span>

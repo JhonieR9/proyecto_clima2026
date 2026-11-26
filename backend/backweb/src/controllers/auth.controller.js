@@ -9,7 +9,16 @@ const AuthService = require('../services/auth.service');
 
 const REFRESH_COOKIE = 'refreshToken';
 
-// Opciones de la cookie segura donde viaja el refresh token.
+/**
+ * Genera las opciones de la cookie que transporta el refresh token.
+ * - httpOnly: evita que JS del navegador la lea (protección XSS).
+ * - secure: fuerza HTTPS en producción para evitar sniffing.
+ * - sameSite: 'strict' mitiga ataques CSRF.
+ * - path: restringe la cookie a las rutas de auth (no se envía en /api/weather).
+ * - maxAge: 7 días, igual al TTL del refresh token en la BD.
+ *
+ * @returns {import('express').CookieOptions}
+ */
 function refreshCookieOptions() {
   const isProd = process.env.NODE_ENV === 'production';
   return {
@@ -22,6 +31,14 @@ function refreshCookieOptions() {
 }
 
 const AuthController = {
+  /**
+   * Registra un nuevo usuario. No inicia sesión automáticamente;
+   * el flujo espera que el usuario vaya al login tras registrarse.
+   *
+   * @param {import('express').Request}  req  - req.body validado por registerSchema
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   // POST /api/auth/register
   async register(req, res, next) {
     try {
@@ -32,6 +49,15 @@ const AuthController = {
     }
   },
 
+  /**
+   * Inicia sesión. Responde con el access token en el body y pone el refresh
+   * token en una cookie HttpOnly (inaccesible desde JS).
+   * El cliente guarda el access token SOLO en memoria para mitigar XSS.
+   *
+   * @param {import('express').Request}  req  - req.body validado por loginSchema
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   // POST /api/auth/login
   async login(req, res, next) {
     try {
@@ -44,6 +70,15 @@ const AuthController = {
     }
   },
 
+  /**
+   * Rota el refresh token. Lee el token de la cookie, lo invalida y emite un
+   * par nuevo. Si el token fue reutilizado (posible robo), el servicio revoca
+   * todas las sesiones del usuario.
+   *
+   * @param {import('express').Request}  req  - req.cookies[refreshToken]
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   // POST /api/auth/refresh  (rotación)
   async refresh(req, res, next) {
     try {
@@ -56,6 +91,14 @@ const AuthController = {
     }
   },
 
+  /**
+   * Cierra la sesión actual: revoca el refresh token en la BD y limpia la cookie.
+   * El access token (en memoria del cliente) expira naturalmente en 15 min.
+   *
+   * @param {import('express').Request}  req  - req.cookies[refreshToken]
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   // POST /api/auth/logout
   async logout(req, res, next) {
     try {
@@ -67,6 +110,15 @@ const AuthController = {
     }
   },
 
+  /**
+   * Devuelve el perfil completo del usuario autenticado.
+   * Se consulta de la BD (no del payload del token) para incluir campos como
+   * role y created_at que no siempre están en el token.
+   *
+   * @param {import('express').Request}  req  - req.user inyectado por authenticate
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   */
   // GET /api/auth/me  (requiere authenticate)
   // Devuelve el perfil completo (id, name, email, role), no solo lo que trae el token.
   async me(req, res, next) {

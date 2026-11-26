@@ -28,6 +28,15 @@ const revalidationQueue = new TaskQueue({
 const FRESH_MS = 15 * 60 * 1000;        // < 15 min: dato fresco, se sirve directo
 const STALE_MS = 24 * 60 * 60 * 1000;   // 15 min a 24 h: se sirve y se revalida
 
+/**
+ * Normaliza el nombre de ciudad a una clave de caché estable.
+ * Convierte a minúsculas, elimina diacríticos (tildes, ñ) y recorta espacios.
+ * Así "Bogota", "bogotá" y "  BOGOTÁ " caen en la misma entrada de caché.
+ * También se usa al guardar favoritas para garantizar de-duplicación coherente.
+ *
+ * @param {string} city
+ * @returns {string}  clave normalizada (ej. 'bogota', 'medellin')
+ */
 // Normaliza el nombre de ciudad a una clave de caché estable: minúsculas, sin
 // acentos y sin espacios sobrantes. Así "Bogota", "bogotá" y "  BOGOTÁ " caen
 // todas en la misma entrada de caché (L1 y L2).
@@ -39,6 +48,14 @@ function cityKeyOf(city) {
     .toLowerCase();
 }
 
+/**
+ * Reordena sugerencias de ciudades poniendo Colombia al inicio.
+ * El sort es estable: el orden relativo dentro de cada grupo se conserva.
+ * Función pura (sin red ni estado externo) para poder testearla de forma aislada.
+ *
+ * @param {Array<{name:string, country:string, country_code?:string}>} results
+ * @returns {Array}
+ */
 // Ordena las sugerencias del geocoding poniendo Colombia primero, manteniendo
 // el orden de relevancia original dentro de cada grupo (sort estable).
 // Función pura (sin red) para poder testearla aislada.
@@ -49,8 +66,17 @@ function orderSuggestions(results) {
 
 // --- L1: caché en memoria del proceso Node ---
 const memoryCache = new Map(); // key: cityKey -> { data, cachedAt }
+
+// TTL del caché en memoria igual al umbral de frescura: si el dato está en L1
+// es porque llegó de la API hace menos de 15 min, así que siempre es fresco.
 const L1_TTL_MS = FRESH_MS;
 
+/**
+ * Lee del caché L1 (memoria). Si la entrada existe pero ha caducado, la elimina.
+ *
+ * @param {string} key
+ * @returns {object|null}
+ */
 function l1Get(key) {
   const entry = memoryCache.get(key);
   if (!entry) return null;
@@ -61,10 +87,24 @@ function l1Get(key) {
   return entry.data;
 }
 
+/**
+ * Escribe en el caché L1 (memoria) marcando el instante de guardado.
+ *
+ * @param {string} key
+ * @param {object} data
+ */
 function l1Set(key, data) {
   memoryCache.set(key, { data, cachedAt: Date.now() });
 }
 
+/**
+ * Convierte un código WMO (World Meteorological Organization) en texto en español.
+ * Los códigos están definidos en: https://open-meteo.com/en/docs#weathervariables
+ * Se devuelve 'Condiciones cambiantes' para cualquier código no mapeado.
+ *
+ * @param {number} code  Código WMO del tiempo actual
+ * @returns {string}
+ */
 // Traduce el weathercode de la WMO a texto legible.
 function getWeatherDescription(code) {
   const codes = {
@@ -80,6 +120,15 @@ function getWeatherDescription(code) {
   return codes[code] || 'Condiciones cambiantes';
 }
 
+/**
+ * Llama a la API de Open-Meteo (geocoding + forecast) y devuelve los datos normalizados.
+ * Primero obtiene las coordenadas del nombre de ciudad y luego el pronóstico para esas coords.
+ * Timeout de 5 s en cada llamada para no bloquear la petición del usuario.
+ *
+ * @param {string} city          Nombre de la ciudad a consultar
+ * @param {string} correlationId Para rastrear la petición en los logs
+ * @returns {Promise<{city,latitude,longitude,temperature,humidity,condition_text}>}
+ */
 // Llama a Open-Meteo (geocoding + forecast) y devuelve datos normalizados.
 async function fetchFromApi(city, correlationId) {
   const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=es&format=json`;
@@ -109,6 +158,13 @@ async function fetchFromApi(city, correlationId) {
   return data;
 }
 
+/**
+ * Convierte una fila de la tabla weather_cache al formato de respuesta de la API.
+ * Los campos NUMERIC de PostgreSQL llegan como string; Number() los convierte.
+ *
+ * @param {object} row  Fila de la tabla weather_cache
+ * @returns {{ city, latitude, longitude, temperature, humidity, condition_text }}
+ */
 // Convierte una fila de weather_cache al formato que devuelve la API.
 // Normaliza los NUMERIC de Postgres (llegan como string).
 function rowToData(row) {
@@ -122,6 +178,15 @@ function rowToData(row) {
   };
 }
 
+/**
+ * Persiste datos de clima en L2 (PostgreSQL) y también en L1 (memoria).
+ * Usa cityKeyOf(city) para normalizar la clave, de modo que las variantes
+ * con y sin tilde del mismo nombre actualicen la misma entrada de caché.
+ *
+ * @param {string} city  Nombre de ciudad tal como lo escribió el usuario
+ * @param {object} data  Datos del clima a persistir
+ * @returns {Promise<void>}
+ */
 // Persiste en L2 (Postgres) y refresca L1. Usa la clave normalizada de la
 // ciudad consultada para que la caché acierte sin importar acentos.
 async function persist(city, data) {
@@ -136,6 +201,17 @@ async function persist(city, data) {
 const WeatherService = {
   /**
    * Devuelve el clima de una ciudad aplicando la estrategia de caching multinivel.
+   *
+   * Decisión de qué fuente usar:
+   *   1. L1 (memoria) si el dato es fresco: respuesta instantánea.
+   *   2. L2 (PostgreSQL) si está fresco (< 15 min): pobla L1 y responde.
+   *   3. L2 stale (15 min a 24 h): responde inmediatamente y revalida en segundo plano.
+   *   4. Expirado o sin caché: llama a la API; guarda en L2 y L1.
+   *   5. API caída pero hay dato stale: lo sirve como stale_fallback.
+   *   6. API caída y sin caché: lanza 503.
+   *
+   * @param {string} city          Nombre de la ciudad
+   * @param {string} correlationId Para trazabilidad en los logs
    * @returns {Promise<{ source: string, data: object }>}
    */
   async getWeather(city, correlationId) {
@@ -190,6 +266,16 @@ const WeatherService = {
     }
   },
 
+  /**
+   * Encola la revalidación del clima de una ciudad en segundo plano.
+   * El patrón Stale-While-Revalidate permite responder inmediatamente
+   * con el dato viejo y actualizar la caché de forma asíncrona.
+   * La cola de-duplica: si ya hay una revalidación en curso para "bogota",
+   * no lanzamos otra y evitamos llamadas redundantes a Open-Meteo.
+   *
+   * @param {string} city
+   * @param {string} correlationId
+   */
   // Refresco en segundo plano para el patrón Stale-While-Revalidate.
   // Encola la revalidación en la cola de tareas: así se limita la concurrencia,
   // se de-duplican peticiones de la misma ciudad y se reintenta ante fallos.
@@ -206,15 +292,25 @@ const WeatherService = {
     );
   },
 
+  /**
+   * Devuelve el estado actual de la cola de revalidación.
+   * Expuesto para el endpoint /health y los tests de concurrencia.
+   *
+   * @returns {{ pending: number, active: number, tracked: number }}
+   */
   // Expuesto para health checks / pruebas: estado de la cola de revalidación.
   getRevalidationQueueStats() {
     return revalidationQueue.stats();
   },
 
   /**
-   * Sugerencias de ciudades para el autocompletado. Consulta el geocoding de
-   * Open-Meteo y devuelve una lista normalizada (nombre, país, región, coords).
-   * @param {string} q  Texto parcial escrito por el usuario (ej. "ca").
+   * Devuelve sugerencias de ciudades para el autocompletado.
+   * Pide 20 resultados al geocoding para tener de dónde priorizar Colombia,
+   * y recorta a 8 para el desplegable. Ante cualquier error devuelve lista vacía
+   * (el autocompletado nunca debe romper la UI).
+   *
+   * @param {string} q             Texto parcial del usuario (ej. "ca")
+   * @param {string} correlationId
    * @returns {Promise<Array<{name,country,admin1,latitude,longitude,label}>>}
    */
   async suggestCities(q, correlationId) {
