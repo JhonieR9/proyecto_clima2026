@@ -6,6 +6,7 @@
 // Conectado con: user.controller.js, auth.middleware.js, index.js.
 // Rol: Enrutador de usuarios. Donde se aplica el control de acceso más granular del proyecto.
 const { Router } = require('express');
+const UserController = require('../controllers/user.controller');
 const {
   authenticate,
   authorize,
